@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibe-tracker.local/schema/ticket-frontmatter.json",
+  "title": "Vibe Tracker Ticket Frontmatter",
+  "description": "Schema for structured ticket YAML frontmatter in .md files",
+  "type": "object",
+  "required": ["id", "title", "type", "status", "created", "updated"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ticket identifier in format {prefix}-{NNNNN}",
+      "pattern": "^[a-z0-9]+-[0-9]+$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable ticket title",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "type": {
+      "type": "string",
+      "description": "Ticket type from the configured type options",
+      "enum": ["issue", "feat", "bug"]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current ticket status",
+      "enum": ["open", "closed"]
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of ticket creation"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last ticket update"
+    }
+  },
+  "examples": [
+    {
+      "id": "issue-00001",
+      "title": "Add login page with OIDC auth",
+      "type": "issue",
+      "status": "open",
+      "created": "2025-01-15T10:30:00Z",
+      "updated": "2025-01-15T10:30:00Z"
+    }
+  ]
+}

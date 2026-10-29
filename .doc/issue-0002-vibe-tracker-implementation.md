@@ -739,3 +739,70 @@ If `VIBE_TRACKER_TICKET_TYPE_OPTIONS` is `["issue", "feat", "bug"]`, the effecti
 | Ticket lifecycle (open → closed) | ✅ |
 | Ticket file naming convention | ✅ |
 | Package.json with bin entry | ✅ |
+
+---
+
+## Build Summary
+
+### What Was Built
+
+#### `vibe-tracker/` — The App Package
+
+**Server (Express + TypeScript):**
+- `src/server/api/tickets.ts` — REST API with CRUD endpoints (`GET/POST/PUT/DELETE /api/tickets/*`)
+- `src/server/mcp/index.ts` — MCP tools (`vibe_tracker_create_ticket`, `vibe_tracker_update_ticket`, `vibe_tracker_delete_ticket`, `vibe_tracker_list_tickets`, `vibe_tracker_get_ticket`) and resources (`vibe://tickets/{id}`, etc.)
+- `src/server/storage/ticket.ts` — Ticket file read/write layer with YAML frontmatter parsing
+- `src/server/storage/config.ts` — Config loading from `vibe-tracker.json`
+- `src/server/index.ts` — Express app with static file serving + API + MCP
+
+**Angular UI (Standalone Components):**
+- `app.component.ts` — Shell layout with sidebar + header + main content
+- `components/app-sidebar/` — Responsive sidebar (small=hamburger overlay, medium=icons only, large=icon+text with collapse)
+- `components/app-header/` — Top bar with theme toggle (sun/moon)
+- `components/dashboard/` — Stats cards (total/open/closed/by type) + recent tickets
+- `components/ticket-list/` — Search/filter/sort/pagination
+- `components/ticket-detail/` — Rendered markdown view with Edit/Save toggle, status toggle, delete
+- `components/ticket-create/` — Form for creating new tickets
+- `lib/theme.service.ts` — Dark/light theme (persisted in localStorage)
+- `lib/api.service.ts` — HTTP client for API calls
+- `lib/lucide-icon.component.ts` — Custom icon wrapper (replaces lucide-angular)
+
+**Styling:**
+- Tailwind CSS v4 with custom design tokens
+- Dark mode with `dark:` variants
+- Markdown prose styles for ticket rendering
+- Responsive breakpoints (768px, 1024px)
+
+#### `vibe-tracker-example-project/` — Demo
+
+- `package.json` — with `vibe` scripts (`vibe:start`, `vibe:open`, etc.)
+- `vibe-tracker.json` — config (port 61000, prefix `issue`, types: issue/feat/bug)
+- `opencode.jsonc` — MCP config pointing to `http://localhost:61000/mcp`
+- `VIBE-TRACKER-SKILL.md` — Agent rules (create ticket before work, branch per ticket, prefix commits, one ticket per session, no merge without instruction, etc.)
+
+### Build Artifacts
+
+- `vibe-tracker/dist/server/` — Compiled Express server (ESM)
+- `vibe-tracker/dist/ui/browser/` — Built Angular SPA (HTML, CSS, JS chunks)
+
+### Verification
+
+The system was tested and confirmed working:
+- Server starts on port 61000 without errors
+- REST API: POST/GET/PUT/DELETE tickets, returns structured JSON with frontmatter + body
+- Angular UI builds successfully and serves static files
+- MCP `/mcp` endpoint responds to `initialize`, `tools/list`, `resources/templates/list`
+- Ticket files are created with proper YAML frontmatter and markdown body
+- File parsing and frontmatter extraction works correctly
+
+### Dev Workflow
+
+```bash
+# From vibe-tracker/
+npx ng build --configuration production   # Build Angular UI
+npx tsc --project tsconfig.server.json    # Compile server
+
+# From vibe-tracker-example-project/
+npm install file:../vibe-tracker --save   # Link to local package
+vibe-tracker start                        # Start everything on port 61000
+```

@@ -1,0 +1,52 @@
+{
+  "name": "vibe-tracker",
+  "version": "0.1.0",
+  "description": "Local ticket tracking for vibe coders",
+  "type": "module",
+  "bin": {
+    "vibe-tracker": "./bin/vibe-tracker.cjs"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "src/",
+    "package.json",
+    "tsconfig.server.json",
+    "angular.json",
+    "tsconfig.json",
+    "tsconfig.app.json"
+  ],
+  "scripts": {
+    "build:server": "tsc --project tsconfig.server.json",
+    "build:ui": "ng build --configuration production",
+    "build": "npm run build:server && npm run build:ui",
+    "dev": "node bin/vibe-tracker.js start --dev",
+    "start": "node dist/server/index.js",
+    "init": "node bin/vibe-tracker.js init"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "commander": "^12.1.0",
+    "cors": "^2.8.5",
+    "yaml": "^2.5.0",
+    "marked": "^14.1.0",
+    "js-yaml": "^4.1.0",
+    "jsonschema": "^1.4.1"
+  },
+  "devDependencies": {
+    "@angular/cli": "^19.0.0",
+    "@angular/build": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/compiler": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/platform-browser": "^19.0.0",
+    "@angular/platform-browser-dynamic": "^19.0.0",
+    "@angular/router": "^19.0.0",
+    "typescript": "^5.6.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/typography": "^0.5.0",
+    "lucide-angular": "^1.0.0"
+  }
+}

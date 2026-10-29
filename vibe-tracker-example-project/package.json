@@ -1,0 +1,14 @@
+{
+  "name": "vibe-tracker-example-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "vibe:init": "vibe-tracker init",
+    "vibe:start": "vibe-tracker start",
+    "vibe": "vibe-tracker start",
+    "vibe:open": "open http://localhost:61000 || xdg-open http://localhost:61000 || start http://localhost:61000"
+  },
+  "dependencies": {
+    "vibe-tracker-ui": "file:../vibe-tracker"
+  }
+}
