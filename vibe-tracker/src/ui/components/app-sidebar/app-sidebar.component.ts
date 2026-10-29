@@ -18,21 +18,18 @@ const NAV_ITEMS = [
     }
 
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex flex-col bg-card border-r border-border transition-all duration-300"
-      [class.w-16]="isMedium() || (isLarge() && collapsed())"
-      [class.w-64]="isLarge() && !collapsed()"
+      class="fixed inset-y-0 left-0 z-30 flex flex-col bg-card border-r border-border transition-all duration-300 md:static md:inset-auto md:z-auto"
+      [class.w-64]="isSmall() && isOpen()"
+      [class.md\:w-16]="isMedium() || (isLarge() && collapsed())"
+      [class.md\:w-64]="isLarge() && !collapsed()"
       [class.-translate-x-full]="isSmall() && !isOpen()"
-      [class.translate-x-0]="isSmall() && isOpen()"
+      [class.translate-x-0]="!isSmall()"
     >
       <div class="flex items-center justify-between h-14 px-3 border-b border-border flex-shrink-0">
-        @if (isLarge() && !collapsed()) {
+        @if (isLarge()) {
           <span class="font-bold text-sm truncate flex-1">Vibe Tracker</span>
-          <button (click)="toggleCollapse()" class="p-1 rounded-md hover:bg-accent transition-colors text-muted-foreground" aria-label="Collapse sidebar">
-            <lucide-icon name="ChevronsLeft" [size]="14"></lucide-icon>
-          </button>
-        } @else if (isLarge() && collapsed()) {
-          <button (click)="toggleCollapse()" class="p-1 rounded-md hover:bg-accent transition-colors text-muted-foreground" aria-label="Expand sidebar">
-            <lucide-icon name="ChevronLeft" [size]="14"></lucide-icon>
+          <button (click)="toggleCollapse()" class="p-1 rounded-md hover:bg-accent transition-colors text-muted-foreground" aria-label="Toggle sidebar">
+            <lucide-icon [name]="collapsed() ? 'ChevronLeft' : 'ChevronsLeft'" [size]="14"></lucide-icon>
           </button>
         }
       </div>
@@ -43,14 +40,12 @@ const NAV_ITEMS = [
             [class.bg-accent]="isCurrent(item.route)" [class.text-foreground]="isCurrent(item.route)"
             [class.text-muted-foreground]="!isCurrent(item.route)" [class.hover:bg-accent]="!isCurrent(item.route)">
             <lucide-icon [name]="item.iconName" [size]="18" class="flex-shrink-0"></lucide-icon>
-            @if (isLarge() && !collapsed()) { <span class="truncate">{{ item.label }}</span> }
+            @if ((isSmall() && isOpen()) || isLarge()) {
+              <span class="truncate">{{ item.label }}</span>
+            }
           </a>
         }
       </nav>
-
-      <div class="p-3 border-t border-border text-xs text-muted-foreground flex-shrink-0">
-        @if (isLarge() && !collapsed()) { <span>v0.1.0</span> }
-      </div>
     </aside>
   `,
 })
@@ -59,14 +54,20 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
   close = output<void>();
   collapsed = signal(false);
   private sub?: Subscription;
+  size = signal<'small' | 'medium' | 'large'>('large');
 
   navItems = signal(NAV_ITEMS);
 
-  isSmall = computed(() => typeof window !== 'undefined' && window.innerWidth < 768);
-  isMedium = computed(() => typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024);
-  isLarge = computed(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
+  isSmall = computed(() => this.size() === 'small');
+  isMedium = computed(() => this.size() === 'medium');
+  isLarge = computed(() => this.size() === 'large');
 
   constructor(private router: Router) {}
+
+  private handleResize = (): void => {
+    const w = window.innerWidth;
+    this.size.set(w < 768 ? 'small' : w < 1024 ? 'medium' : 'large');
+  };
 
   ngOnInit(): void {
     try {
@@ -74,11 +75,16 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
       if (stored !== null) this.collapsed.set(stored === 'true');
     } catch { /* noop */ }
     this.sub = this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
-      if (typeof window !== 'undefined' && window.innerWidth < 768) this.close.emit();
+      if (window.innerWidth < 768) this.close.emit();
     });
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
   }
 
-  ngOnDestroy(): void { this.sub?.unsubscribe(); }
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+    window.removeEventListener('resize', this.handleResize);
+  }
 
   toggleCollapse(): void {
     this.collapsed.update((v) => {
