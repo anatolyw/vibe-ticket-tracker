@@ -15,8 +15,6 @@ import { getIsDark } from './lib/theme.service';
         <app-sidebar
           [isOpen]="mobileSidebarOpen()"
           (close)="mobileSidebarOpen.set(false)"
-          class="hidden md:block"
-          [class.hidden]="!mobileSidebarOpen()"
         />
         <main class="flex-1 overflow-y-auto p-4 md:p-6">
           <router-outlet />

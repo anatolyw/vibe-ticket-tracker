@@ -18,34 +18,39 @@ const NAV_ITEMS = [
     }
 
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex flex-col bg-card border-r border-border transition-all duration-300 md:static md:inset-auto md:z-auto"
+      class="flex flex-col h-full bg-card border-r border-border"
+      [class.fixed]="isSmall()"
+      [class.inset-y-0]="isSmall()"
+      [class.left-0]="isSmall()"
+      [class.z-30]="isSmall()"
       [class.w-64]="isSmall() && isOpen()"
-      [class.md\:w-16]="isMedium() || (isLarge() && collapsed())"
-      [class.md\:w-64]="isLarge() && !collapsed()"
       [class.-translate-x-full]="isSmall() && !isOpen()"
       [class.translate-x-0]="!isSmall()"
+      [class.hidden]="isSmall() && !isOpen()"
+      [class.md\:w-16]="isMedium() || (isLarge() && collapsed())"
+      [class.md\:w-64]="isLarge() && !collapsed()"
+      [style.position]="isSmall() ? 'fixed' : 'static'"
     >
-      <div class="flex items-center justify-between h-14 px-3 border-b border-border flex-shrink-0">
-        @if (isLarge()) {
-          <span class="font-bold text-sm truncate flex-1">Vibe Tracker</span>
-          <button (click)="toggleCollapse()" class="p-1 rounded-md hover:bg-accent transition-colors text-muted-foreground" aria-label="Toggle sidebar">
-            <lucide-icon [name]="collapsed() ? 'ChevronLeft' : 'ChevronsLeft'" [size]="14"></lucide-icon>
-          </button>
-        }
-      </div>
-
-      <nav class="flex-1 py-3 px-2 space-y-1 overflow-y-auto">
+      <!-- Navigation (stretches to fill all available space, pushing button to bottom) -->
+      <nav class="flex-1 flex flex-col py-3 px-2 space-y-1 overflow-y-auto">
         @for (item of navItems(); track item.route) {
           <a [routerLink]="item.route" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors"
             [class.bg-accent]="isCurrent(item.route)" [class.text-foreground]="isCurrent(item.route)"
             [class.text-muted-foreground]="!isCurrent(item.route)" [class.hover:bg-accent]="!isCurrent(item.route)">
             <lucide-icon [name]="item.iconName" [size]="18" class="flex-shrink-0"></lucide-icon>
-            @if ((isSmall() && isOpen()) || isLarge()) {
+            @if ((size() === 'small' && isOpen()) || isLarge()) {
               <span class="truncate">{{ item.label }}</span>
             }
           </a>
         }
       </nav>
+
+      <!-- Collapse/Expand button: always visible, pushed to bottom by flex-1 nav -->
+      <div class="p-2 border-t border-border flex justify-center flex-shrink-0">
+        <button (click)="onToggleCollapse()" class="p-2 rounded-md hover:bg-accent transition-colors text-muted-foreground" [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
+          <lucide-icon [name]="collapsed() ? 'ChevronLeft' : 'ChevronsLeft'" [size]="16"></lucide-icon>
+        </button>
+      </div>
     </aside>
   `,
 })
@@ -86,13 +91,13 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
     window.removeEventListener('resize', this.handleResize);
   }
 
-  toggleCollapse(): void {
+  onToggleCollapse = (): void => {
     this.collapsed.update((v) => {
       const next = !v;
       try { localStorage.setItem('vibe-tracker-sidebar-collapsed', String(next)); } catch { /* noop */ }
       return next;
     });
-  }
+  };
 
   isCurrent(route: string): boolean {
     const current = this.router.url;
