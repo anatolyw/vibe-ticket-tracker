@@ -22,15 +22,35 @@ npm install vibe-tracker
 If installing from source:
 
 ```bash
-# Create local bin directory
+# 1. Create local bin directory
 mkdir -p $HOME/.local/bin
-# Ensure the CLI is in your PATH
+
+# 2. Add to PATH (add to ~/.bashrc or ~/.zshrc for persistence)
 export PATH="$HOME/.local/bin:$PATH"
 
-# Or symlink manually
-# ln -s /path/to/vibe-tracker/bin/vibe-tracker.cjs ~/.local/bin/vibe-tracker
-ls -l ./bin/vibe-tracker.cjs
-ln -s ./bin/vibe-tracker.cjs ~/.local/bin/vibe-tracker
+# 3. Symlink the CLI using an ABSOLUTE path (CRITICAL — see note below)
+ln -s /absolute/path/to/your/vibe-tracker-project/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
+```
+
+**⚠️ Important: Symlink must use an absolute path**
+
+The symlink target cannot be relative (e.g., `./bin/vibe-tracker.cjs`). Symlink targets are resolved relative to the symlink's location (`$HOME/.local/bin/`), not your current working directory. So `ln -s ./bin/vibe-tracker.cjs ~/.local/bin/vibe-tracker` would resolve to `~/.local/bin/bin/vibe-tracker.cjs` — which doesn't exist.
+
+**Correct examples** (choose the one matching your setup):
+
+```bash
+# From any directory — use the absolute path to the vibe-tracker repo
+ln -s /Users/mac/workspace/vibe-tracker/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
+
+# Or if you want a project-relative symlink (works from the vibe-tracker/ directory):
+ln -s $(pwd)/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
+```
+
+**Verify:**
+
+```bash
+vibe-tracker        # Should show usage info
+vibe-tracker init   # Should initialize in the current directory
 ```
 
 ## Usage
@@ -150,7 +170,7 @@ tsc --project tsconfig.server.json --watch
 ```
 vibe-tracker/
 ├── bin/
-│   └── vibe-tracker.js          # CLI entry point
+│   └── vibe-tracker.cjs         # CLI entry point
 ├── src/
 │   ├── server/                  # Express API + MCP
 │   │   ├── api/

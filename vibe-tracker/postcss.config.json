@@ -1,0 +1,7 @@
+{
+  "plugins": {
+    "@tailwindcss/postcss": {
+      "content": ["./src/ui/**/*.{ts,html}"]
+    }
+  }
+}

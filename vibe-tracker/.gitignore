@@ -8,6 +8,7 @@ out-tsc/
 # Angular
 browser/
 prerendered-routes.json
+.angular/cache/
 
 # IDE
 .vscode/

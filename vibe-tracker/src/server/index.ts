@@ -38,12 +38,12 @@ export function startServer(app: express.Application, port: number): void {
   });
 }
 
-// If run directly with baseDir and port args
-if (process.argv.length >= 4) {
+// If run directly with baseDir, distDir, and port args
+if (process.argv.length >= 5) {
   const baseDir = process.argv[2];
-  const port = parseInt(process.argv[3]);
+  const distDir = process.argv[3];
+  const port = parseInt(process.argv[4]);
   const config = loadConfig(baseDir);
-  const distDir = resolve(baseDir, 'dist', 'ui');
   const app = createApp(config, baseDir, distDir);
   startServer(app, port);
 }

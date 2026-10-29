@@ -30,7 +30,7 @@ import { ApiService, TicketSummary } from '../../lib/api.service';
           <div class="rounded-lg border bg-card p-4">
             <div class="flex items-center justify-between">
               <span class="text-sm font-medium text-muted-foreground">Total</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><rect width="18" height="14" x="3" y="2" rx="2"/><path d="V4 h10"/><path d="M7 10h4"/><path d="M7 14h2"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><rect width="18" height="14" x="3" y="2" rx="2"/><path d="M3 4h10"/><path d="M7 10h4"/><path d="M7 14h2"/></svg>
             </div>
             <p class="text-2xl font-bold mt-1">{{ stats.total }}</p>
           </div>
