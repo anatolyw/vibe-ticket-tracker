@@ -101,14 +101,17 @@ function writeJSONC(path: string, content: string): void {
 function generateOpencodeConfig(port: number): string {
   return JSON.stringify(
     {
-      instructions: ['./AGENTS.md'],
-      mcpServers: {
-        'vibe-tracker': {
-          command: 'http',
-          args: [`http://localhost:${port}/mcp`],
-          headers: { 'Content-Type': 'application/json' },
+      $schema: 'https://opencode.ai/config.json',
+      mcp: {
+        servers: {
+          'vibe-tracker': {
+            type: 'remote',
+            url: `http://localhost:${port}/mcp`,
+            oauth: false,
+          },
         },
       },
+      instructions: ['./AGENTS.md'],
     },
     null,
     2,
@@ -118,23 +121,39 @@ function generateOpencodeConfig(port: number): string {
 function mergeOpencode(existing: string, port: number): string {
   try {
     const parsed: Record<string, unknown> = JSON.parse(existing);
-    if (!parsed.mcpServers || typeof parsed.mcpServers !== 'object' || Array.isArray(parsed.mcpServers)) {
-      parsed.mcpServers = {};
-    }
-    (parsed.mcpServers as Record<string, unknown>)['vibe-tracker'] = {
-      command: 'http',
-      args: [`http://localhost:${port}/mcp`],
-      headers: { 'Content-Type': 'application/json' },
-    };
+    const agentsPath = './AGENTS.md';
 
     // Handle instructions array — add ./AGENTS.md if not present
-    const agentsPath = './AGENTS.md';
     if (Array.isArray(parsed.instructions)) {
       if (!parsed.instructions.includes(agentsPath)) {
         parsed.instructions.push(agentsPath);
       }
     } else {
       parsed.instructions = [agentsPath];
+    }
+
+    // V2 schema: mcp.servers
+    if (parsed.mcp && typeof parsed.mcp === 'object' && !Array.isArray(parsed.mcp)) {
+      const mcp = parsed.mcp as Record<string, unknown>;
+      if (!mcp.servers || typeof mcp.servers !== 'object' || Array.isArray(mcp.servers)) {
+        mcp.servers = {};
+      }
+      (mcp.servers as Record<string, unknown>)['vibe-tracker'] = {
+        type: 'remote',
+        url: `http://localhost:${port}/mcp`,
+        oauth: false,
+      };
+    } else {
+      // V1 or no mcp key — convert to V2
+      parsed.mcp = {
+        servers: {
+          'vibe-tracker': {
+            type: 'remote',
+            url: `http://localhost:${port}/mcp`,
+            oauth: false,
+          },
+        },
+      };
     }
 
     return JSON.stringify(parsed, null, 2) + '\n';

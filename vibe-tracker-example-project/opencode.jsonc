@@ -1,12 +1,11 @@
 {
-  "mcpServers": {
-    "vibe-tracker": {
-      "command": "http",
-      "args": [
-        "http://localhost:61000/mcp"
-      ],
-      "headers": {
-        "Content-Type": "application/json"
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "vibe-tracker": {
+        "type": "remote",
+        "url": "http://localhost:61000/mcp",
+        "oauth": false
       }
     }
   },
