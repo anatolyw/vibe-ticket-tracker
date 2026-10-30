@@ -1,0 +1,8 @@
+{
+  "VIBE_TRACKER_PORT": 61005, // WARNING: If you change this port, update your MCP server configuration (e.g., opencode.jsonc) to match
+  "VIBE_TRACKER_DOC_ROOT": ".vibe-tracker",
+  "VIBE_TRACKER_TICKET_PREFIX": "issue",
+  "VIBE_TRACKER_TICKET_TYPE_OPTIONS": ["issue","feat","bug"],
+  "VIBE_TRACKER_TICKET_NUM_PATTERN": "XXXXX",
+  "VIBE_TRACKER_TICKET_SUFFIX_LENGTH": 80
+}

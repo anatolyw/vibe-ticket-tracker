@@ -38,8 +38,8 @@ export function startServer(app: express.Application, port: number): void {
   });
 }
 
-// If run directly with baseDir, distDir, and port args
-if (process.argv.length >= 5) {
+// If run directly with baseDir, distDir, and port args (not when imported)
+if (process.argv.length >= 5 && process.argv[1].endsWith('index.js')) {
   const baseDir = process.argv[2];
   const distDir = process.argv[3];
   const port = parseInt(process.argv[4]);

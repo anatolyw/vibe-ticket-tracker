@@ -1,0 +1,43 @@
+# Agent Behavior for Vibe Tracker
+
+## Development Workflow
+
+### Running the App
+
+The app is served on **http://localhost:{PORT}** via the backend server, which serves the built Angular frontend:
+- Backend serves static files from: `frontend/dist/ui/browser`
+- Build command: `cd frontend && npm run build`
+- Access the app at: **http://localhost:{PORT}**
+
+### After Code Changes
+
+1. **Rebuild the Angular frontend** after any source code changes
+2. **Verify the backend is still running** on port `{PORT}` (`curl -s http://localhost:{PORT} | head -5`)
+3. **Keep the app running** for manual review — do NOT stop or kill the backend server
+4. If the backend crashed, restart it with `vibe-tracker start`
+
+### Quick Reference
+
+```bash
+# Rebuild frontend
+cd frontend && npm run build
+
+# Check backend is running
+curl -s http://localhost:{PORT} | head -5
+
+# Backend serves on port {PORT} — do not kill it
+```
+
+## Vibe Tracker Usage
+
+This project uses Vibe Tracker for managing tasks. The AI agent must:
+
+1. Create a ticket before starting any code changes
+2. Reference the ticket ID in all commits and branches
+3. Follow the [Vibe Tracker Skill](.opencode/skills/vibe-tracker.md) for detailed rules
+
+### Scripts
+
+- `npm run vibe:start` — Start the Vibe Tracker server
+- `npm run vibe:open` — Open the UI in your browser
+- `npm run vibe:init` — Initialize Vibe Tracker (if not already set up)

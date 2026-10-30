@@ -12,9 +12,9 @@ export PATH="$HOME/.local/bin:$PATH"
 vibe-tracker   # Should show usage info
 ```
 
-> **Note**: If you get `command not found`, the CLI binary lives at `/workspace/vibe-tracker/bin/vibe-tracker.cjs`. You can either:
-> - Run it directly: `node /workspace/vibe-tracker/bin/vibe-tracker.cjs init`
-> - Or set up a symlink: `ln -s /workspace/vibe-tracker/bin/vibe-tracker.cjs ~/.local/bin/vibe-tracker`
+> **Note**: If you get `command not found`, the CLI binary lives at `/workspace/vibe-tracker/backend/bin/vibe-tracker.cjs`. You can either:
+> - Run it directly: `node /workspace/vibe-tracker/backend/bin/vibe-tracker.cjs init`
+> - Or set up a symlink: `ln -s /workspace/vibe-tracker/backend/bin/vibe-tracker.cjs ~/.local/bin/vibe-tracker`
 
 ## Quick Start
 
@@ -22,7 +22,7 @@ vibe-tracker   # Should show usage info
 # Make sure vibe-tracker is in your PATH
 export PATH="$HOME/.local/bin:$PATH"
 
-# Initialize (generates config, .vibe-tracker/ directory, package.json scripts)
+# Initialize (interactive wizard — config, skill, MCP, AGENTS.md)
 vibe-tracker init
 
 # Start the server
@@ -44,17 +44,19 @@ npm install file:../vibe-tracker --save
 npm link ../vibe-tracker
 ```
 
-## Project Structure
+## Project Structure (with default setup)
 
 ```
 vibe-tracker-example-project/
+├── .opencode/skills
+│   └── vibe-tracker.md     # Dedicated Vibe Tracker skill
 ├── .vibe-tracker/          # Ticket files (auto-generated)
 │   └── issue-NNNNN-*.md
+├── AGENTS.md               # Agent behavior guidelines
 ├── opencode.jsonc          # MCP config for OpenCode
-├── vibe-tracker.json       # App configuration
-├── VIBE-TRACKER-SKILL.md   # Agent rules
 ├── package.json            # with vibe scripts
-└── README.md
+├── README.md
+└── vibe-tracker.jsonc      # App configuration (JSONC with comments)
 ```
 
 ## Usage with AI Agents
@@ -72,7 +74,7 @@ This project is configured to work with OpenCode's MCP integration:
 | `vibe` | `vibe-tracker start` | Start the server |
 | `vibe:start` | `vibe-tracker start` | Start the server |
 | `vibe:init` | `vibe-tracker init` | Initialize a new project |
-| `vibe:open` | `open http://localhost:61000` | Open in browser |
+| `vibe:open` | `open http://localhost:VIBE_TRACKER_PORT` | Open in browser |
 
 ## Ticket Types
 
@@ -80,4 +82,4 @@ This project is configured to work with OpenCode's MCP integration:
 - **feat** — New feature or enhancement
 - **bug** — Fixing an existing bug
 
-Customize in `vibe-tracker.json` under `VIBE_TRACKER_TICKET_TYPE_OPTIONS`.
+Customize in `vibe-tracker.jsonc` under `VIBE_TRACKER_TICKET_TYPE_OPTIONS`.

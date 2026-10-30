@@ -2,7 +2,9 @@
   "mcpServers": {
     "vibe-tracker": {
       "command": "http",
-      "args": ["http://localhost:61000/mcp"],
+      "args": [
+        "http://localhost:61005/mcp"
+      ],
       "headers": {
         "Content-Type": "application/json"
       }

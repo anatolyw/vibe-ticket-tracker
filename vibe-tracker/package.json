@@ -9,7 +9,9 @@
   "files": [
     "backend/bin/",
     "backend/dist/",
-    "package.json"
+    "package.json",
+    "VIBE-TRACKER-SKILL-TEMPLATE.md",
+    "VIBE-TRACKER-AGENT-TEMPLATE.md"
   ],
   "scripts": {
     "postinstall": "cd backend && npm install && cd ../frontend && npm install",
