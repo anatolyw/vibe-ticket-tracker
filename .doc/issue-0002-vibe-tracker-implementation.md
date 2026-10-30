@@ -326,33 +326,16 @@ vibe-tracker start
 - Closes on: hamburger tap, route navigation, backdrop tap.
 - Full-width or ~300px wide (whichever is smaller).
 
-#### 2.6.5 Shadcn / UI Component Reference
+#### 2.6.5 UI Component Reference
 
-Per **shadcn** and **frontend-design** skills:
-
-**Shadcn/ui components used:**
-
-| Component | Usage |
-|---|---|
-| `Button` | All action buttons (create, edit, save, cancel, delete, toggle status, theme) |
-| `DropdownMenu` | Sort options, filter menus, nav item overflow |
-| `Input` | Search bar, ticket title input |
-| `Textarea` | Ticket description and body editor |
-| `Select` | Type filter, status filter, sort selector |
-| `Badge` | Ticket type and status indicators (colored) |
-| `Card` | Dashboard stat cards, ticket card |
-| `Tabs` | (future) read/edit mode tabs vs button |
-| `Dialog` | Delete confirmation modal |
-| `Tooltip` | Sidebar item tooltips when collapsed |
-| `Toggle` | Sort asc/desc toggle |
-| `Separator` | Visual dividers in sidebar and header |
+Per **frontend-design** skills:
 
 **Typography:**
 - Rendered ticket body: `prose prose-sm md:prose-base dark:prose-invert` via `@tailwindcss/typography`.
 - Frontmatter: monospace (`font-mono`) for key-value pairs.
 
 **Icons:**
-- Lucide icons (shadcn default): `LayoutDashboard`, `Ticket`, `Plus`, `Search`, `Filter`, `ArrowUpDown`, `Sun`, `Moon`, `Menu`, `X`, `ChevronLeft`, `ChevronsLeft`, `Save`, `Trash2`, `Edit`, `Eye`, `EyeOff`, `AlertCircle`.
+- Lucide icons: `LayoutDashboard`, `Ticket`, `Plus`, `Search`, `Filter`, `ArrowUpDown`, `Sun`, `Moon`, `Menu`, `X`, `ChevronLeft`, `ChevronsLeft`, `Save`, `Trash2`, `Edit`, `Eye`, `EyeOff`, `AlertCircle`.
 
 **Design Principles:**
 - Neutral base palette with semantic color accents (green=open, gray=closed, blue=issue, purple=feat, red=bug).
@@ -375,10 +358,9 @@ Per **angular-developer** skill (standalone + signals pattern):
 |---|---|
 | Framework | Angular 19+ (standalone components) |
 | Styling | Tailwind CSS v4 |
-| UI Components | shadcn/ui (Radix primitives) |
 | Markdown Rendering | `marked` (client-side) + `@tailwindcss/typography` |
 | YAML Parsing | `js-yaml` (client-side for editor) |
-| Icons | Lucide (shadcn default) |
+| Icons | Lucide |
 | Build | Angular CLI / Vite (via `@tailwindcss/vite`) |
 
 ---
@@ -730,7 +712,6 @@ If `VIBE_TRACKER_TICKET_TYPE_OPTIONS` is `["issue", "feat", "bug"]`, the effecti
 | Dark/Light theme toggle | ✅ |
 | Responsive sidebar (small=overlay, medium=icons, large=icon+text+collapse) | ✅ |
 | Responsive hamburger menu | ✅ |
-| Shadcn components referenced | ✅ |
 | Frontend design principles referenced | ✅ |
 | Angular standalone + signals architecture | ✅ |
 | Agent skill file (`VIBE-TRACKER-SKILL.md`) | ✅ |
