@@ -137,7 +137,7 @@ function mergeOpencode(existing: string, port: number): string {
 function generateUIDistPath(): string {
   // Find UI dist relative to vibe-tracker package root
   const cliPath = resolve(__cliDir, 'cli.js');
-  const pkgRoot = dirname(dirname(cliPath)); // vibe-tracker/
+  const pkgRoot = dirname(dirname(dirname(cliPath))); // vibe-tracker/
   const candidates = [
     resolve(pkgRoot, 'frontend', 'dist', 'ui', 'browser'),
     resolve(pkgRoot, 'frontend', 'dist', 'ui'),
