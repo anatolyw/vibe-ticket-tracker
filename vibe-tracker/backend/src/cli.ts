@@ -98,7 +98,8 @@ function writeJSONC(path: string, content: string): void {
   writeFileSync(path, content, 'utf-8');
 }
 
-function generateOpencodeConfig(port: number): string {
+function generateOpencodeConfig(port: number, skillPath: string): string {
+  const skillRel = './' + relative('.', skillPath);
   return JSON.stringify(
     {
       $schema: 'https://opencode.ai/config.json',
@@ -111,25 +112,32 @@ function generateOpencodeConfig(port: number): string {
           },
         },
       },
-      instructions: ['./AGENTS.md'],
+      instructions: [
+        './AGENTS.md',
+        skillRel,
+      ],
     },
     null,
     2,
   ) + '\n';
 }
 
-function mergeOpencode(existing: string, port: number): string {
+function mergeOpencode(existing: string, port: number, skillPath: string): string {
   try {
     const parsed: Record<string, unknown> = JSON.parse(existing);
     const agentsPath = './AGENTS.md';
 
-    // Handle instructions array — add ./AGENTS.md if not present
+    // Handle instructions array — add ./AGENTS.md and skill path if not present
     if (Array.isArray(parsed.instructions)) {
       if (!parsed.instructions.includes(agentsPath)) {
         parsed.instructions.push(agentsPath);
       }
+      const skillRel = './' + relative('.', skillPath);
+      if (!parsed.instructions.includes(skillRel)) {
+        parsed.instructions.push(skillRel);
+      }
     } else {
-      parsed.instructions = [agentsPath];
+      parsed.instructions = [agentsPath, './' + relative('.', skillPath)];
     }
 
     // V2 schema: mcp.servers
@@ -159,7 +167,7 @@ function mergeOpencode(existing: string, port: number): string {
     return JSON.stringify(parsed, null, 2) + '\n';
   } catch {
     // Fall back to overwrite if invalid JSON
-    return generateOpencodeConfig(port);
+    return generateOpencodeConfig(port, skillPath);
   }
 }
 
@@ -251,18 +259,24 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
   }
   console.log(success(`Ticket directory → ${docRoot}`));
 
-  // ── Step 2: MCP config ────────────────────────────────────────
+  // ── Step 2: Skill path (needed for MCP config instructions) ─────────
+  const skillDefault = '.opencode/skills/vibe-tracker.md';
+  const skillInput = await ask('Where should the Vibe Tracker skill file be placed? (default: ' + skillDefault + ')');
+  const skillPath = skillInput ? resolve(base, skillInput) : resolve(base, skillDefault);
+
+  // ── Step 3: MCP config ────────────────────────────────────────
   const opencodePath = resolve(base, 'opencode.jsonc');
   let mcpGenerated = false;
+  let skillGenerated = false;
 
   const generateMcp = await askYesNo('Generate opencode.jsonc MCP configuration?');
   if (generateMcp) {
-    const mcpContent = generateOpencodeConfig(port);
+    const mcpContent = generateOpencodeConfig(port, skillPath);
     if (existsSync(opencodePath)) {
       const existing = readFileSync(opencodePath, 'utf-8');
       const overwriteMcp = await askYesNo('Existing ' + opencodePath + ' found. Update MCP entry?');
       if (overwriteMcp) {
-        const merged = mergeOpencode(existing, port);
+        const merged = mergeOpencode(existing, port, skillPath);
         const bak = opencodePath + '.bak';
         renameSync(opencodePath, bak);
         console.log(success(`Backed up → ${bak}`));
@@ -277,33 +291,38 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
       console.log(success(`MCP config written → ${opencodePath}`));
       mcpGenerated = true;
     }
-  } else {
-    console.log('  Skipping MCP config. Add manually to your IDE config.');
-  }
 
-  // ── Step 3: Skill file ────────────────────────────────────────
-  const skillDefault = '.opencode/skills/vibe-tracker.md';
-  const skillInput = await ask('Where should the Vibe Tracker skill file be placed? (default: ' + skillDefault + ')');
-  const skillPath = skillInput ? resolve(base, skillInput) : resolve(base, skillDefault);
-  let skillGenerated = false;
-
-  if (existsSync(skillPath)) {
-    const overwriteSkill = await askYesNo('Skill file at \'' + skillPath + '\' already exists. Overwrite?');
-    if (overwriteSkill) {
-      const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
-      writeJSONC(skillPath, template);
-      console.log(success(`Skill written → ${skillPath}`));
-      skillGenerated = true;
-    } else {
-      console.log('\n' + c(C.yellow, 'Save manually:'));
-      const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
-      console.log(template);
-    }
-  } else {
+    // Write skill file (it's referenced in the MCP config instructions)
     const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
     writeJSONC(skillPath, template);
     console.log(success(`Skill written → ${skillPath}`));
     skillGenerated = true;
+  } else {
+    console.log('  Skipping MCP config. Add manually to your IDE config.');
+    console.log('  Skill file will be created next.');
+  }
+
+  // ── Step 4: Skill file (skip if already written in Step 3) ─────────
+
+  if (!skillGenerated) {
+    if (existsSync(skillPath)) {
+      const overwriteSkill = await askYesNo('Skill file at \'' + skillPath + '\' already exists. Overwrite?');
+      if (overwriteSkill) {
+        const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
+        writeJSONC(skillPath, template);
+        console.log(success(`Skill written → ${skillPath}`));
+        skillGenerated = true;
+      } else {
+        console.log('\n' + c(C.yellow, 'Save manually:'));
+        const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
+        console.log(template);
+      }
+    } else {
+      const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
+      writeJSONC(skillPath, template);
+      console.log(success(`Skill written → ${skillPath}`));
+      skillGenerated = true;
+    }
   }
 
   // ── Step 4: AGENTS.md ─────────────────────────────────────────
