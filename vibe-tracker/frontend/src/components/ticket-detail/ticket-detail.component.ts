@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { LucideIconComponent } from '../../lib/lucide-icon.component';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { ApiService, UpdateTicketInput } from '../../lib/api.service';
 import { marked } from 'marked';
 
 @Component({
   selector: 'app-ticket-detail',
-  imports: [RouterLink, LucideIconComponent],
+  imports: [RouterLink, LucideIconComponent, NgClass],
   template: `
     <div class="max-w-4xl mx-auto space-y-6">
       @if (loading) {
@@ -25,17 +26,11 @@ import { marked } from 'marked';
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-2 flex-wrap">
               <span class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [class.bg-blue-100]="ticket()!.type === 'issue'" [class.bg-purple-100]="ticket()!.type === 'feat'" [class.bg-red-100]="ticket()!.type === 'bug'"
-                [class.text-blue-800]="ticket()!.type === 'issue'" [class.text-purple-800]="ticket()!.type === 'feat'" [class.text-red-800]="ticket()!.type === 'bug'"
-                [class.dark:bg-blue-900]="ticket()!.type === 'issue'" [class.dark:bg-purple-900]="ticket()!.type === 'feat'" [class.dark:bg-red-900]="ticket()!.type === 'bug'"
-                [class.dark:text-blue-200]="ticket()!.type === 'issue'" [class.dark:text-purple-200]="ticket()!.type === 'feat'" [class.dark:text-red-200]="ticket()!.type === 'bug'">
+                [ngClass]="ticket()!.type === 'issue' ? 'bg-info/15 text-info' : ticket()!.type === 'feat' ? 'bg-purple/15 text-purple' : 'bg-destructive/15 text-destructive'">
                 {{ ticket()!.type }}
               </span>
               <span class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [class.bg-green-100]="ticket()!.status === 'open'" [class.bg-gray-100]="ticket()!.status === 'closed'"
-                [class.text-green-800]="ticket()!.status === 'open'" [class.text-gray-600]="ticket()!.status === 'closed'"
-                [class.dark:bg-green-900]="ticket()!.status === 'open'" [class.dark:bg-gray-700]="ticket()!.status === 'closed'"
-                [class.dark:text-green-200]="ticket()!.status === 'open'" [class.dark:text-gray-300]="ticket()!.status === 'closed'">
+                [ngClass]="ticket()!.status === 'open' ? 'bg-success/15 text-success' : 'bg-muted/50 text-muted-foreground'">
                 {{ ticket()!.status }}
               </span>
               <span class="text-xs text-muted-foreground font-mono">{{ ticket()!.id }}</span>

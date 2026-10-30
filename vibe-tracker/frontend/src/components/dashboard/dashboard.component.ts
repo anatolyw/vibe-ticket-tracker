@@ -1,10 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { ApiService, TicketSummary } from '../../lib/api.service';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, NgClass],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
@@ -53,9 +54,9 @@ import { ApiService, TicketSummary } from '../../lib/api.service';
               <span class="text-sm font-medium text-muted-foreground">By Type</span>
             </div>
             <div class="flex gap-2 mt-1 text-xs">
-              <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">issue: {{ stats.issue || 0 }}</span>
-              <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">feat: {{ stats.feat || 0 }}</span>
-              <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">bug: {{ stats.bug || 0 }}</span>
+              <span class="px-2 py-0.5 rounded-full bg-info/15 text-info dark:bg-info/25 dark:text-info">issue: {{ stats.issue || 0 }}</span>
+              <span class="px-2 py-0.5 rounded-full bg-purple/15 text-purple dark:bg-purple/25 dark:text-purple">feat: {{ stats.feat || 0 }}</span>
+              <span class="px-2 py-0.5 rounded-full bg-destructive/15 text-destructive dark:bg-destructive/25 dark:text-destructive">bug: {{ stats.bug || 0 }}</span>
             </div>
           </div>
         }
@@ -83,17 +84,11 @@ import { ApiService, TicketSummary } from '../../lib/api.service';
                 <span class="w-2 h-2 rounded-full flex-shrink-0" [class.bg-green-500]="ticket.status === 'open'" [class.bg-muted-foreground]="ticket.status === 'closed'"></span>
                 <span class="flex-1 truncate text-sm">{{ ticket.title }}</span>
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
-                  [class.bg-blue-100]="ticket.type === 'issue'" [class.bg-purple-100]="ticket.type === 'feat'" [class.bg-red-100]="ticket.type === 'bug'"
-                  [class.text-blue-800]="ticket.type === 'issue'" [class.text-purple-800]="ticket.type === 'feat'" [class.text-red-800]="ticket.type === 'bug'"
-                  [class.dark:bg-blue-900]="ticket.type === 'issue'" [class.dark:bg-purple-900]="ticket.type === 'feat'" [class.dark:bg-red-900]="ticket.type === 'bug'"
-                  [class.dark:text-blue-200]="ticket.type === 'issue'" [class.dark:text-purple-200]="ticket.type === 'feat'" [class.dark:text-red-200]="ticket.type === 'bug'">
+                  [ngClass]="ticket.type === 'issue' ? 'bg-info/15 text-info' : ticket.type === 'feat' ? 'bg-purple/15 text-purple' : 'bg-destructive/15 text-destructive'">
                   {{ ticket.type }}
                 </span>
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
-                  [class.bg-green-100]="ticket.status === 'open'" [class.bg-gray-100]="ticket.status === 'closed'"
-                  [class.text-green-800]="ticket.status === 'open'" [class.text-gray-600]="ticket.status === 'closed'"
-                  [class.dark:bg-green-900]="ticket.status === 'open'" [class.dark:bg-gray-700]="ticket.status === 'closed'"
-                  [class.dark:text-green-200]="ticket.status === 'open'" [class.dark:text-gray-300]="ticket.status === 'closed'">
+                  [ngClass]="ticket.status === 'open' ? 'bg-success/15 text-success' : 'bg-muted/50 text-muted-foreground'">
                   {{ ticket.status }}
                 </span>
               </a>

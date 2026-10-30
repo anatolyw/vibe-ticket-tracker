@@ -2,13 +2,12 @@ import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
 import { AppSidebarComponent } from './components/app-sidebar/app-sidebar.component';
-import { getIsDark } from './lib/theme.service';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, AppHeaderComponent, AppSidebarComponent],
   template: `
-    <div class="flex h-screen bg-background overflow-hidden flex-col" [class.dark]="isDark()">
+    <div class="flex h-screen bg-background overflow-hidden flex-col">
       <app-header (openSidebar)="mobileSidebarOpen.set(true)" />
 
       <div class="flex flex-1 min-h-0 overflow-hidden">
@@ -28,7 +27,6 @@ import { getIsDark } from './lib/theme.service';
   `,
 })
 export class AppComponent implements OnInit, OnDestroy {
-  isDark = signal(false);
   mobileSidebarOpen = signal(false);
   private sizeSignal = signal<'small' | 'medium' | 'large'>('large');
 
@@ -38,10 +36,6 @@ export class AppComponent implements OnInit, OnDestroy {
     const w = window.innerWidth;
     this.sizeSignal.set(w < 768 ? 'small' : w < 1024 ? 'medium' : 'large');
   };
-
-  constructor() {
-    this.isDark.set(getIsDark());
-  }
 
   ngOnInit(): void {
     this.handleResize();

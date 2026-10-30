@@ -58,7 +58,7 @@ import { ApiService, CreateTicketInput } from '../../lib/api.service';
           <div class="p-3 rounded-md bg-destructive/10 text-destructive text-sm">{{ error() }}</div>
         }
         @if (success()) {
-          <div class="p-3 rounded-md bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-sm">
+          <div class="p-3 rounded-md bg-success/15 text-success text-sm">
             Ticket created! Redirecting...
           </div>
         }
