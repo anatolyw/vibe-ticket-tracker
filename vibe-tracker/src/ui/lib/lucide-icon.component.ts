@@ -1,4 +1,4 @@
-import { Component, input, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, input, computed, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 const ICONS: Record<string, string | null> = {
@@ -9,7 +9,9 @@ const ICONS: Record<string, string | null> = {
   Moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
   Menu: '<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>',
   ChevronLeft: '<path d="m15 18-6-6 6-6"/>',
+  ChevronRight: '<path d="m9 18 6-6-6-6"/>',
   ChevronsLeft: '<path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/>',
+  ChevronsRight: '<path d="m13 7 5 5-5 5"/><path d="m20 7 5 5-5 5"/>',
   Search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
   Save: '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>',
   X: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
@@ -27,22 +29,34 @@ export { ICONS };
 @Component({
   selector: 'lucide-icon',
   standalone: true,
-  template: `<svg xmlns="http://www.w3.org/2000/svg" #svg [attr.width]="size()" [attr.height]="size()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [attr.aria-label]="name()"></svg>`,
+  imports: [],
+  template: `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      [attr.width]="size()"
+      [attr.height]="size()"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      [attr.aria-label]="name()"
+      [innerHTML]="safeIcon()"
+    ></svg>
+  `,
 })
-export class LucideIconComponent implements AfterViewInit {
+export class LucideIconComponent {
   name = input.required<string>();
   size = input(20);
   iconPath = input<string>('');
 
-  @ViewChild('svg') svgEl!: ElementRef<SVGSVGElement>;
-
   private sanitizer = inject(DomSanitizer);
 
-  ngAfterViewInit(): void {
+  safeIcon = computed(() => {
     const name = this.name();
     const iconPath = this.iconPath();
     const icon = iconPath || ICONS[name] || '';
-    const safeHtml = this.sanitizer.bypassSecurityTrustHtml(icon);
-    this.svgEl.nativeElement.innerHTML = safeHtml!.toString();
-  }
+    return this.sanitizer.bypassSecurityTrustHtml(icon);
+  });
 }

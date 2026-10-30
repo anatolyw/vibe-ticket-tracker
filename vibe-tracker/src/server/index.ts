@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { resolve, join } from 'node:path';
 import { loadConfig } from './storage/config.js';
@@ -25,7 +25,7 @@ export function createApp(config: VibeTrackerConfig, baseDir: string, distDir: s
   app.use(express.static(staticPath));
 
   // SPA fallback
-  app.get('*', (req, res) => {
+  app.get('*', (_req: Request, res: Response) => {
     res.sendFile(resolve(staticPath, 'index.html'));
   });
 

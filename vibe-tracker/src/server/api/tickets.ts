@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { readFileSync } from 'node:fs';
 import {
   getAllTickets,
   getTicket,
@@ -72,7 +73,7 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
 
   // GET /api/tickets/:id
   router.get('/:id', (req: Request, res: Response) => {
-    const ticket = getTicket(config, docRoot, req.params.id);
+    const ticket = getTicket(config, docRoot, req.params.id as string);
     if (!ticket) {
       res.status(404).json({ error: `Ticket "${req.params.id}" not found` });
       return;
@@ -82,14 +83,13 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
 
   // GET /api/tickets/:id/raw
   router.get('/:id/raw', (req: Request, res: Response) => {
-    const ticket = getTicket(config, docRoot, req.params.id);
+    const ticket = getTicket(config, docRoot, req.params.id as string);
     if (!ticket) {
       res.status(404).json({ error: `Ticket "${req.params.id}" not found` });
       return;
     }
     res.set('Content-Type', 'text/markdown');
     // Re-read raw from file for consistency
-    const { readFileSync } = require('node:fs');
     const raw = readFileSync(ticket.filePath, 'utf-8');
     res.send(raw);
   });
@@ -127,7 +127,7 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
       return;
     }
 
-    const result = updateTicket(config, docRoot, req.params.id, updates);
+    const result = updateTicket(config, docRoot, req.params.id as string, updates);
     if ('error' in result) {
       res.status(400).json({ error: result.error });
       return;
@@ -137,7 +137,7 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
 
   // DELETE /api/tickets/:id
   router.delete('/:id', (req: Request, res: Response) => {
-    const deleted = deleteTicket(config, docRoot, req.params.id);
+    const deleted = deleteTicket(config, docRoot, req.params.id as string);
     if (!deleted) {
       res.status(404).json({ error: `Ticket "${req.params.id}" not found` });
       return;

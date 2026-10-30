@@ -5,6 +5,7 @@ import { marked } from 'marked';
 import { VibeTrackerConfig } from './config';
 export type { VibeTrackerConfig };
 import TicketSchema from './ticket-schema.json' with { type: 'json' };
+import { Validator } from 'jsonschema';
 
 export interface TicketFrontmatter {
   id: string;
@@ -42,11 +43,13 @@ function validateFrontmatter(frontmatter: Record<string, unknown>, typeOptions: 
   if (typeProp && Array.isArray(typeOptions)) {
     typeProp.enum = typeOptions;
   }
-  const { Validator } = require('jsonschema');
   const validator = new Validator();
   const result = validator.validate(frontmatter, schema as any);
   if (!result.valid) {
-    return result.errors.map((e: { instancePath: string; message: string }) => `${e.instancePath || '/'}: ${e.message}`).join('; ');
+    return result.errors.map((e) => {
+      const path = e.path.join('.');
+      return `${path || '/'}: ${e.message}`;
+    }).join('; ');
   }
   return null;
 }

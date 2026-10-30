@@ -38,7 +38,7 @@ const NAV_ITEMS = [
             [class.bg-accent]="isCurrent(item.route)" [class.text-foreground]="isCurrent(item.route)"
             [class.text-muted-foreground]="!isCurrent(item.route)" [class.hover:bg-accent]="!isCurrent(item.route)">
             <lucide-icon [name]="item.iconName" [size]="18" class="flex-shrink-0"></lucide-icon>
-            @if ((size() === 'small' && isOpen()) || isLarge()) {
+            @if ((size() === 'small' && isOpen()) || (isLarge() && !collapsed())) {
               <span class="truncate">{{ item.label }}</span>
             }
           </a>
@@ -48,7 +48,7 @@ const NAV_ITEMS = [
       <!-- Collapse/Expand button: always visible, pushed to bottom by flex-1 nav -->
       <div class="p-2 border-t border-border flex justify-center flex-shrink-0">
         <button (click)="onToggleCollapse()" class="p-2 rounded-md hover:bg-accent transition-colors text-muted-foreground" [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
-          <lucide-icon [name]="collapsed() ? 'ChevronLeft' : 'ChevronsLeft'" [size]="16"></lucide-icon>
+          <lucide-icon [name]="collapsed() ? 'ChevronsRight' : 'ChevronsLeft'" [size]="16"></lucide-icon>
         </button>
       </div>
     </aside>
