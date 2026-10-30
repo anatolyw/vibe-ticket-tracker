@@ -4,15 +4,15 @@
 
 ### Running the App
 
-The app is served on **http://localhost:61005** via the backend server, which serves the built Angular frontend:
+The app is served on **http://localhost:61000** via the backend server, which serves the built Angular frontend:
 - Backend serves static files from: `frontend/dist/ui/browser`
 - Build command: `cd frontend && npm run build`
-- Access the app at: **http://localhost:61005**
+- Access the app at: **http://localhost:61000**
 
 ### After Code Changes
 
 1. **Rebuild the Angular frontend** after any source code changes
-2. **Verify the backend is still running** on port `61005` (`curl -s http://localhost:61005 | head -5`)
+2. **Verify the backend is still running** on port `61000` (`curl -s http://localhost:61000 | head -5`)
 3. **Keep the app running** for manual review — do NOT stop or kill the backend server
 4. If the backend crashed, restart it with `vibe-tracker start`
 
@@ -23,9 +23,9 @@ The app is served on **http://localhost:61005** via the backend server, which se
 cd frontend && npm run build
 
 # Check backend is running
-curl -s http://localhost:61005 | head -5
+curl -s http://localhost:61000 | head -5
 
-# Backend serves on port 61005 — do not kill it
+# Backend serves on port 61000 — do not kill it
 ```
 
 ## Vibe Tracker Usage
