@@ -101,6 +101,7 @@ function writeJSONC(path: string, content: string): void {
 function generateOpencodeConfig(port: number): string {
   return JSON.stringify(
     {
+      instructions: ['./AGENTS.md'],
       mcpServers: {
         'vibe-tracker': {
           command: 'http',
@@ -125,6 +126,17 @@ function mergeOpencode(existing: string, port: number): string {
       args: [`http://localhost:${port}/mcp`],
       headers: { 'Content-Type': 'application/json' },
     };
+
+    // Handle instructions array — add ./AGENTS.md if not present
+    const agentsPath = './AGENTS.md';
+    if (Array.isArray(parsed.instructions)) {
+      if (!parsed.instructions.includes(agentsPath)) {
+        parsed.instructions.push(agentsPath);
+      }
+    } else {
+      parsed.instructions = [agentsPath];
+    }
+
     return JSON.stringify(parsed, null, 2) + '\n';
   } catch {
     // Fall back to overwrite if invalid JSON
