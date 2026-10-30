@@ -71,10 +71,10 @@ function startCommand(baseDir) {
   console.log('Starting Vibe Tracker...');
 
   // Start the Express server (from compiled dist)
-  const serverPath = resolve(__dirname, '..', 'dist', 'server', 'index.js');
+  const serverPath = resolve(__dirname, '..', 'dist', 'index.js');
   // UI dist is inside the vibe-tracker package, not the project
   // Angular 19+ outputs to dist/ui/browser/ (flat if older Angular)
-  const potentialBase = resolve(__dirname, '..', 'dist', 'ui');
+  const potentialBase = resolve(__dirname, '..', '..', 'frontend', 'dist', 'ui');
   let uiDistPath = resolve(potentialBase, 'browser', 'index.html');
   if (existsSync(uiDistPath)) {
     // Angular 19+: files in dist/ui/browser/

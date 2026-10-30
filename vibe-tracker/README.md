@@ -11,6 +11,11 @@ A local ticket tracking system for vibe coders. Track all performed changes as p
 - **Dark/Light Theme**: Toggle with persisted preference
 - **Responsive**: Works on mobile (hamburger menu) through desktop (collapsible sidebar)
 
+## Sub-projects
+
+- [**Backend**](backend/README.md) — Express API, MCP endpoint, ticket storage engine
+- [**Frontend**](frontend/README.md) — Angular 19 app with Tailwind CSS v4
+
 ## Installation
 
 ```bash
@@ -29,7 +34,7 @@ mkdir -p $HOME/.local/bin
 export PATH="$HOME/.local/bin:$PATH"
 
 # 3. Symlink the CLI using an ABSOLUTE path (CRITICAL — see note below)
-ln -s /absolute/path/to/your/vibe-tracker-project/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
+ln -s /absolute/path/to/your/vibe-tracker-project/vibe-tracker/backend/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
 ```
 
 **⚠️ Important: Symlink must use an absolute path**
@@ -40,15 +45,17 @@ The symlink target cannot be relative (e.g., `./bin/vibe-tracker.cjs`). Symlink 
 
 ```bash
 # From any directory — use the absolute path to the vibe-tracker repo
-ln -s /Users/mac/workspace/vibe-tracker/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
+ln -s /Users/mac/workspace/vibe-tracker-project/vibe-tracker/backend/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
 
 # Or if you want a project-relative symlink (works from the vibe-tracker/ directory):
-ln -s $(pwd)/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
+cd vibe-tracker
+ln -s $(pwd)/backend/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
 ```
 
 **Verify:**
 
 ```bash
+which vibe-tracker
 vibe-tracker        # Should show usage info
 vibe-tracker init   # Should initialize in the current directory
 ```
@@ -139,53 +146,90 @@ Access AI tools at `http://localhost:61000/mcp`:
 ### Build from Source
 
 ```bash
-# Install dependencies
+# Install dependencies (runs automatically in backend/ and frontend/)
 npm install
 
-# Build server
-npm run build:server
-
-# Build Angular UI
-npm run build:ui
-
-# Or build both
+# Build server and UI
 npm run build
 
 # Start the server
-node dist/server/index.js
+node backend/dist/index.js
+```
+
+**Note:** `npm install` is delegated to each sub-project via a `postinstall` hook.
+If you need to reinstall only one side:
+```bash
+cd backend  && npm install   # Server dependencies only
+cd ../frontend && npm install # Angular/Tailwind dependencies only
 ```
 
 ### Development Workflow
 
 ```bash
-# Watch Angular changes
-npm run build:ui -- --watch
+# Watch Angular changes (from repo root)
+cd frontend && npx ng build --configuration production --watch
 
-# Watch TypeScript server changes
-tsc --project tsconfig.server.json --watch
+# Watch TypeScript server changes (from repo root)
+cd backend && npx tsc --project tsconfig.server.json --watch
+```
+
+### E2E Tests
+
+**Install Playwright browsers** (required once per machine):
+
+```bash
+cd frontend
+
+# macOS
+npx playwright install chromium
+
+# Linux (installs system deps + browser in one step)
+npx playwright install --with-deps chromium
+```
+
+Then run the tests:
+
+```bash
+# Start the server first
+node ../dist/index.js &
+
+# Run tests (from frontend/)
+npm run test:e2e
 ```
 
 ## Project Structure
 
 ```
 vibe-tracker/
-├── bin/
-│   └── vibe-tracker.cjs         # CLI entry point
-├── src/
-│   ├── server/                  # Express API + MCP
-│   │   ├── api/
-│   │   ├── mcp/
-│   │   └── storage/
-│   └── ui/                      # Angular standalone app
-│       ├── components/
-│       └── lib/
-├── dist/
-│   ├── server/                  # Compiled server
-│   └── ui/                      # Built Angular SPA
+├── backend/                    # Server, CLI, API
+│   ├── bin/
+│   │   └── vibe-tracker.cjs    # CLI entry point
+│   ├── src/
+│   │   ├── api/                # Express REST routes
+│   │   ├── mcp/                # MCP JSON-RPC endpoint
+│   │   ├── storage/            # Ticket CRUD & YAML parsing
+│   │   └── index.ts            # App factory & server
+│   ├── dist/                   # Compiled server output
+│   ├── tsconfig.json
+│   └── tsconfig.server.json
+├── frontend/                   # Angular SPA
+│   ├── src/
+│   │   ├── components/         # Standalone Angular components
+│   │   ├── lib/                # Shared services
+│   │   ├── app.component.ts
+│   │   ├── app.config.ts
+│   │   ├── main.ts
+│   │   ├── styles.css
+│   │   └── index.html
+│   ├── public/                 # Static assets
+│   ├── e2e/                    # Playwright tests
+│   ├── angular.json
+│   ├── playwright.config.ts
+│   ├── tsconfig.json
+│   └── tsconfig.app.json
+├── dist/                       # Root build output (symlink or merge)
 ├── package.json
-├── tsconfig.server.json
-├── angular.json
-└── tsconfig.json
+└── .gitignore
 ```
 
 ## License

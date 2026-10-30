@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync, unlinkSync, existsSync, readdirSync, mkdir
 import { resolve, join, basename } from 'node:path';
 import { parse, stringify } from 'yaml';
 import { marked } from 'marked';
-import { VibeTrackerConfig } from './config';
+import { VibeTrackerConfig } from './config.js';
 export type { VibeTrackerConfig };
 import TicketSchema from './ticket-schema.json' with { type: 'json' };
 import { Validator } from 'jsonschema';

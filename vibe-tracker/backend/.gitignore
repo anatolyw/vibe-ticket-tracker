@@ -1,0 +1,6 @@
+# Backend
+
+TypeScript compilation output.
+
+dist/
+*.tsbuildinfo

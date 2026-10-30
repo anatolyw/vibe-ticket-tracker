@@ -4,53 +4,20 @@
   "description": "Local ticket tracking for vibe coders",
   "type": "module",
   "bin": {
-    "vibe-tracker": "./bin/vibe-tracker.cjs"
+    "vibe-tracker": "./backend/bin/vibe-tracker.cjs"
   },
   "files": [
-    "bin/",
-    "dist/",
-    "src/",
-    "package.json",
-    "tsconfig.server.json",
-    "angular.json",
-    "tsconfig.json",
-    "tsconfig.app.json"
+    "backend/bin/",
+    "backend/dist/",
+    "package.json"
   ],
   "scripts": {
-    "build:server": "tsc --project tsconfig.server.json",
-    "build:ui": "ng build --configuration production",
+    "postinstall": "cd backend && npm install && cd ../frontend && npm install",
+    "build:server": "cd backend && npx tsc --project tsconfig.server.json",
+    "build:ui": "cd frontend && npx ng build --configuration production",
     "build": "npm run build:server && npm run build:ui",
-    "dev": "node bin/vibe-tracker.cjs start --dev",
-    "start": "node dist/server/index.js",
-    "init": "node bin/vibe-tracker.cjs init"
-  },
-  "dependencies": {
-    "commander": "^12.1.0",
-    "cors": "^2.8.5",
-    "express": "^4.21.0",
-    "js-yaml": "^4.1.0",
-    "jsonschema": "^1.4.1",
-    "marked": "^14.1.0",
-    "yaml": "^2.5.0"
-  },
-  "devDependencies": {
-    "@angular/build": "^19.0.0",
-    "@angular/cli": "^19.0.0",
-    "@angular/common": "^19.0.0",
-    "@angular/compiler": "^19.0.0",
-    "@angular/core": "^19.0.0",
-    "@angular/forms": "^19.0.0",
-    "@angular/platform-browser": "^19.0.0",
-    "@angular/platform-browser-dynamic": "^19.0.0",
-    "@angular/router": "^19.0.0",
-    "@tailwindcss/postcss": "^4.3.3",
-    "@tailwindcss/typography": "^0.5.0",
-    "@tailwindcss/vite": "^4.0.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "lucide-angular": "^1.0.0",
-    "playwright": "^1.64.1",
-    "tailwindcss": "^4.0.0",
-    "typescript": "^5.6.0"
+    "dev": "node backend/bin/vibe-tracker.cjs start --dev",
+    "start": "node backend/dist/index.js",
+    "init": "node backend/bin/vibe-tracker.cjs init"
   }
 }

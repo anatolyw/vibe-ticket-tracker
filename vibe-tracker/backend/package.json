@@ -1,0 +1,23 @@
+{
+  "name": "vibe-tracker-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.server.json"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "js-yaml": "^4.1.0",
+    "jsonschema": "^1.4.1",
+    "marked": "^14.1.0",
+    "yaml": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "typescript": "^5.6.0"
+  }
+}

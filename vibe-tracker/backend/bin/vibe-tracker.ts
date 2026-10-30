@@ -4,9 +4,9 @@ import { Command } from 'commander';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { spawn, execSync } from 'node:child_process';
-import { createApp, startServer } from './server/index.js';
-import { loadConfig, initConfig, DEFAULT_CONFIG } from './server/storage/config.js';
-import { getDocRoot, getNextNumber, createTicket } from './server/storage/ticket.js';
+import { createApp, startServer } from './src/server/index.js';
+import { loadConfig, initConfig, DEFAULT_CONFIG } from './src/storage/config.js';
+import { getDocRoot, getNextNumber, createTicket } from './src/storage/ticket.js';
 
 const program = new Command();
 
@@ -63,15 +63,15 @@ program
     console.log('Starting Vibe Tracker...');
 
     // Build Angular UI
-    const uiDir = resolve(process.cwd(), 'src/ui');
-    const distDir = resolve(process.cwd(), 'dist/ui');
+    const uiDir = resolve(process.cwd(), 'frontend', 'src', 'ui');
+    const distDir = resolve(process.cwd(), 'dist', 'ui');
 
     // Find angular.json or use project root
     let projectRoot = process.cwd();
     let angularJson = null;
     const candidates = [
-      join(projectRoot, 'angular.json'),
-      join(projectRoot, '..', 'vibe-tracker', 'angular.json'),
+      join(projectRoot, 'frontend', 'angular.json'),
+      join(projectRoot, '..', 'vibe-tracker', 'frontend', 'angular.json'),
     ];
     for (const candidate of candidates) {
       if (existsSync(candidate)) {

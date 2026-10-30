@@ -1,0 +1,11 @@
+# Frontend
+
+Angular compilation output and Vite artifacts.
+
+dist/
+.vite/
+out-tsc/
+node_modules/
+.angular/
+playwright-report/
+test-results/
