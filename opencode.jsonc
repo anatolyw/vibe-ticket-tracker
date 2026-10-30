@@ -1,5 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugins": ["./.opencode/plugins/secure-read"],
-  "instructions": ["./AGENTS.md"]
+  "instructions": ["./.agents/AGENTS.md"]
 }

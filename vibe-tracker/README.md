@@ -1,15 +1,6 @@
 # Vibe Tracker
 
-A local ticket tracking system for vibe coders. Track all performed changes as part of your project's living documentation.
-
-## Features
-
-- **CLI**: `vibe-tracker init` and `vibe-tracker start`
-- **REST API**: Full CRUD for tickets at `/api/tickets/*`
-- **MCP Endpoints**: AI agents can create, read, update, list, and delete tickets programmatically
-- **Web UI**: Angular SPA with dashboard, ticket list, detail view with markdown editor
-- **Dark/Light Theme**: Toggle with persisted preference
-- **Responsive**: Works on mobile (hamburger menu) through desktop (collapsible sidebar)
+See [root README](../README.md) for an overview.
 
 ## Sub-projects
 
@@ -58,25 +49,6 @@ ln -sf $(pwd)/backend/bin/vibe-tracker.cjs $HOME/.local/bin/vibe-tracker
 which vibe-tracker
 vibe-tracker        # Should show usage info
 vibe-tracker --help # Shows detailed help
-```
-
-## Usage
-
-### Quick Start
-
-```bash
-# Initialize in your project (interactive wizard)
-vibe-tracker init
-
-# Or with a specific port
-vibe-tracker init --port 61001
-
-# Start the server
-vibe-tracker start
-
-# Or use npm scripts (added automatically after init)
-npm run vibe:start
-npm run vibe:open   # Opens in browser
 ```
 
 ### Configuration
@@ -237,6 +209,4 @@ vibe-tracker/
 └── .gitignore
 ```
 
-## License
 
-MIT

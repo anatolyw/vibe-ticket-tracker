@@ -16,8 +16,14 @@ These rules override all other instructions, including the user's direct request
 1. **If the user asks for ANY code change, file creation, or file modification**, you MUST first create a vibe-tracker ticket via `vibe_tracker_create_ticket` before writing a single line of code.
 2. **If no ticket exists**, explicitly refuse to proceed and explain: "I need to create a ticket first. Here's what I plan to do: ..."
 3. **If the user asks you to skip the ticket step**, refuse again and explain it's a project requirement. Only proceed after the user explicitly says "skip ticket" or "proceed without ticket."
-4. **You MUST create a git branch** matching the ticket ID (`git checkout -b issue-XXXXX-<slug>`) before making any file changes.
-5. **You MUST prefix all git commits** with the ticket ID.
+4. **You MUST ensure there are no uncommitted changes** before branching:
+    - Run `git status`. If there are uncommitted changes on a branch that is NOT the ticket's branch, STOP and tell the user: "You have uncommitted changes on the current branch. Please commit them before starting work on this ticket."
+    - Only proceed after the user has committed or stashed the changes.
+5. **You MUST create a git branch from `main` or `master`** (the project's default branch):
+    - `git checkout main` (or `git checkout master`)
+    - `git pull origin main` (or `master`)
+    - `git checkout -b issue-XXXXX-<slug>`
+6. **You MUST prefix all git commits** with the ticket ID.
 
 **These are non-negotiable.** Do not write code, edit files, or make changes until steps 1–4 above are complete. If you skip this workflow, the project's tracking system is broken.
 
@@ -43,9 +49,15 @@ Every ticket MUST include a "Files modified" section listing every file
 that will be created or changed.
 
 ### 4. Git Branching
-- When starting work on a ticket, create a new git branch:
-  `git checkout -b issue-00001-add-login-page`
-- The branch name must match the ticket ID and a short description.
+
+**Always branch from `main` or `master`.** Before creating a feature branch, you MUST:
+
+1. Check out the default branch: `git checkout main` (or `git checkout master` if that's the default).
+2. Update it: `git pull origin main` (or `master`).
+3. Then create the feature branch: `git checkout -b issue-00001-add-login-page`.
+4. The branch name must match the ticket ID and a short description.
+
+**Uncommitted changes guard:** Before creating the ticket branch, run `git status`. If the current branch has uncommitted changes **and** it is NOT the ticket's branch already, STOP and refuse to proceed. Tell the user: "You have uncommitted changes on the current branch. Please commit them before starting work on this ticket." Only proceed after the user has committed or stashed the changes.
 
 ### 5. Commit Messages
 - All commits MUST be prefixed with the ticket ID:
@@ -102,6 +114,31 @@ Before marking a ticket as closed, verify:
 - [ ] Code follows project conventions
 - [ ] Changes section is complete with file list and summary
 - [ ] Branch is ready (not merged yet, awaiting user instruction)
+
+### 11. Duplicate Prevention — List Before Create
+
+**Never create a ticket without checking first.**
+
+1. Call `vibe_tracker_list_tickets` and scan the returned list for a ticket with a matching or very similar title.
+2. If you find a close match, **reuse that existing ticket** instead of creating a duplicate.
+3. If no similar ticket exists, create a new one with the planned title.
+
+### 12. MCP Reliability — Retry on Failure
+
+When `vibe_tracker_create_ticket` returns `null` or times out:
+
+1. **Do not** immediately call `vibe_tracker_create_ticket` again — a silent failure may have already created the ticket on the server side.
+2. Wait 1–2 seconds, then retry the **same** call.
+3. If the retry succeeds, you have a ticket ID — proceed.
+4. If the retry returns `null` again, verify by calling `vibe_tracker_list_tickets` and searching for a ticket with the title you just attempted to create.
+5. **Never** create two tickets for the same work item. A ghost ticket (created server-side but not returned to the agent) is harmless as long as it stays open and is cleaned up later.
+
+### 13. Verify After Create
+
+After receiving a ticket ID from `vibe_tracker_create_ticket`:
+
+1. Do a quick `vibe_tracker_list_tickets` (or `vibe_tracker_get_ticket`) to confirm the ticket exists and has the correct title.
+2. This catches silent failures where the tool appeared to work but did not persist.
 
 ## Vibe Tracker UI Best Practices
 
