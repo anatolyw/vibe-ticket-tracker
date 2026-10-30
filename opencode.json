@@ -1,4 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugins": ["./plugins/secure-read"]
+  "plugins": ["./plugins/secure-read"],
+  "instructions": ["vibe-tracker/AGENTS.md"]
 }

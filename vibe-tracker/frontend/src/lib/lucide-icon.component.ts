@@ -11,7 +11,7 @@ const ICONS: Record<string, string | null> = {
   ChevronLeft: '<path d="m15 18-6-6 6-6"/>',
   ChevronRight: '<path d="m9 18 6-6-6-6"/>',
   ChevronsLeft: '<path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/>',
-  ChevronsRight: '<path d="m13 7 5 5-5 5"/><path d="m20 7 5 5-5 5"/>',
+  ChevronsRight: '<path d="m6 7 5 5-5 5"/><path d="m13 7 5 5-5 5"/>',
   Search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
   Save: '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>',
   X: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',

@@ -46,8 +46,8 @@ const NAV_ITEMS = [
       </nav>
 
       <!-- Collapse/Expand button: always visible, pushed to bottom by flex-1 nav -->
-      <div class="p-2 border-t border-border flex justify-center flex-shrink-0">
-        <button (click)="onToggleCollapse()" class="p-2 rounded-md hover:bg-accent transition-colors text-muted-foreground" [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
+      <div class="px-2 border-t border-border flex justify-center flex-shrink-0">
+        <button (click)="onToggleCollapse()" class="px-3 py-2.5 rounded-md transition-colors text-muted-foreground hover:bg-accent" [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
           <lucide-icon [name]="collapsed() ? 'ChevronsRight' : 'ChevronsLeft'" [size]="16"></lucide-icon>
         </button>
       </div>
