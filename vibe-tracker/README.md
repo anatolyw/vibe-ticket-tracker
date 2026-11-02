@@ -152,7 +152,7 @@ cd backend && npx tsc --project tsconfig.server.json --watch
 
 ### E2E Tests
 
-**Install Playwright browsers** (required once per machine):
+**Install Playwright browsers** (required once per machine, run from `frontend/`):
 
 ```bash
 cd frontend
@@ -164,14 +164,34 @@ npx playwright install chromium
 npx playwright install --with-deps chromium
 ```
 
-Then run the tests:
+**Build and start the server** (requires `npm run build` at repo root first):
 
 ```bash
-# Start the server first
-node ../dist/index.js &
+# Build the app (compiles backend + frontend)
+npm run build
 
-# Run tests (from frontend/)
+# Start the server (keeps running in the background)
+node backend/dist/index.js &
+```
+
+**Run the tests:**
+
+```bash
+# From frontend/
 npm run test:e2e
+
+# Interactive mode (helpful for debugging — opens the browser)
+npx playwright test --headed
+
+# Visual test explorer
+npx playwright test --ui
+```
+
+**Clean up:**
+
+```bash
+# Kill the background server
+kill %1   # or: pkill -f "node backend/dist/index.js"
 ```
 
 ## Project Structure

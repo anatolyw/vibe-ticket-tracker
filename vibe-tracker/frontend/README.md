@@ -62,11 +62,19 @@ npm run build          # Build production bundle (dist/ui/browser/)
 ## E2E Tests
 
 ```bash
-# Start the server from the repo root directory
-node ../dist/index.js &
+# Build and start the server (from repo root)
+npm run build && node backend/dist/index.js &
 
-# Run tests
+# From frontend/
 npm run test:e2e
+
+# Interactive mode (opens the browser)
+npx playwright test --headed
+```
+
+**Clean up:**
+```bash
+kill %1   # or: pkill -f "node backend/dist/index.js"
 ```
 
 ## Styles
