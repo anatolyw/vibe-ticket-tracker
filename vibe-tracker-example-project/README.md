@@ -1,80 +1,39 @@
 # Vibe Tracker Example Project
 
-A demo project showing how to use the `vibe-tracker` package for local ticket tracking.
+This demo project content was set up with `vibe-tracker init` package for local ticket tracking.
 
-## Prerequisites
+After setup, keep server running during vibe coding for UI and MCP endpoints.
 
-Ensure the `vibe-tracker` CLI is available in your PATH:
-
-```bash
-# The CLI is installed at:
-export PATH="$HOME/.local/bin:$PATH"
-vibe-tracker   # Should show usage info
-```
-
-> **Note**: If you get `command not found`, the CLI binary lives at `/workspace/vibe-tracker/backend/bin/vibe-tracker.cjs`. You can either:
-> - Run it directly: `node /workspace/vibe-tracker/backend/bin/vibe-tracker.cjs init`
-> - Or set up a symlink: `ln -s /workspace/vibe-tracker/backend/bin/vibe-tracker.cjs ~/.local/bin/vibe-tracker`
-
-## Quick Start
+## Setup & Display Next Steps
 
 ```bash
-# Make sure vibe-tracker is in your PATH
-export PATH="$HOME/.local/bin:$PATH"
+$ mkdir vibe-tracker-example-project
+$ cd vibe-tracker-example-project
+$ npm init -y                     
+$ npm install ../vibe-tracker/vibe-tracker-1.0.0.tgz
+$ npx vibe-tracker init # Run setup dialog                    
 
-# Initialize (interactive wizard — config, skill, MCP, AGENTS.md)
-vibe-tracker init
+═══ Vibe Tracker Initialize ═══
 
-# Start the server
-vibe-tracker start
+❯ What port should the Vibe Tracker server use? (61000-62000, default: 61000) 
+✓ Config written → /Users/mac/workspace-rl/vibe-tracker/vibe-tracker-example-project1/vibe-tracker.jsonc
+✓ Ticket directory → /Users/mac/workspace-rl/vibe-tracker/vibe-tracker-example-project1/.vibe-tracker
+❯ Where should the Vibe Tracker skill file be placed? (default: .opencode/skills/vibe-tracker.md) 
+❯ Generate opencode.jsonc MCP configuration? (y/N) y
+✓ MCP config written → /Users/mac/workspace-rl/vibe-tracker/vibe-tracker-example-project1/opencode.jsonc
+✓ Skill written → /Users/mac/workspace-rl/vibe-tracker/vibe-tracker-example-project1/.opencode/skills/vibe-tracker.md
+❯ Create VIBE-TRACKER-AGENTS.md with Vibe Tracker workflow? (y/N) y
+✓ VIBE-TRACKER-AGENTS.md written → /Users/mac/workspace-rl/vibe-tracker/vibe-tracker-example-project1/VIBE-TRACKER-AGENTS.md
 
-# Open in browser
-npm run vibe:open
+═══ Setup Complete ═══
+
+Next steps:
+  npx vibe-tracker start    — Start the server
+  Open in browser http://localhost:61000
+  Agent file → VIBE-TRACKER-AGENTS.md
+  Skill file → .opencode/skills/vibe-tracker.md
+  MCP config for OpenCode → opencode.jsonc
 ```
-
-## Setup for Development
-
-To link this project to a local `vibe-tracker/` package:
-
-```bash
-# From vibe-tracker-example-project/
-npm install file:../vibe-tracker --save
-
-# Or use npm link (requires global install first)
-npm link ../vibe-tracker
-```
-
-## Project Structure (with default setup)
-
-```
-vibe-tracker-example-project/
-├── .opencode/skills
-│   └── vibe-tracker.md     # Dedicated Vibe Tracker skill
-├── .vibe-tracker/          # Ticket files (auto-generated)
-│   └── issue-NNNNN-*.md
-├── AGENTS.md               # Agent behavior guidelines
-├── opencode.jsonc          # MCP config for OpenCode
-├── package.json            # with vibe scripts
-├── README.md
-└── vibe-tracker.jsonc      # App configuration (JSONC with comments)
-```
-
-## Usage with AI Agents
-
-This project is configured to work with OpenCode's MCP integration:
-
-1. The `opencode.jsonc` file configures the MCP server endpoint
-2. `VIBE-TRACKER-SKILL.md` provides rules for how agents should use the tracker
-3. Agents use MCP tools to create/list/update/delete tickets programmatically
-
-## Package.json Scripts
-
-| Script | Command | Description |
-|--------|---------|-------------|
-| `vibe` | `vibe-tracker start` | Start the server |
-| `vibe:start` | `vibe-tracker start` | Start the server |
-| `vibe:init` | `vibe-tracker init` | Initialize a new project |
-| `vibe:open` | `open http://localhost:VIBE_TRACKER_PORT` | Open in browser |
 
 ## Ticket Types
 

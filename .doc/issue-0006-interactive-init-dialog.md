@@ -36,7 +36,7 @@ Replace the `init` command with an interactive prompt-based wizard. Consolidate 
 | `backend/bin/vibe-tracker.ts` | **DELETE** | Duplicate Commander version, never the actual entry point |
 | `backend/src/storage/config.ts` | **MODIFY** | Support `.jsonc` format, JSONC parsing |
 | `VIBE-TRACKER-SKILL-TEMPLATE.md` | **NEW** | Skill template (moved from example project) |
-| `VIBE-TRACKER-AGENT-TEMPLATE.md` | **NEW** | AGENTS.md template for projects |
+| `VIBE-TRACKER-AGENTS-TEMPLATE.md` | **NEW** | VIBE-TRACKER-AGENTS.md template for projects |
 
 ---
 
@@ -100,16 +100,16 @@ All prompts use ANSI colors: cyan for questions, green for success, yellow for w
    - **No** → print template content to console with `Save manually:` instruction
 3. Copy content from `VIBE-TRACKER-SKILL-TEMPLATE.md`
 
-### Step 4: AGENTS.md Integration
+### Step 4: VIBE-TRACKER-AGENTS.md Integration
 
-1. If `AGENTS.md` does **not** exist:
-   - Ask: **"Create AGENTS.md with Vibe Tracker workflow? (y/N)"**
-   - **Yes** → generate from `VIBE-TRACKER-AGENT-TEMPLATE.md`
+1. If `VIBE-TRACKER-AGENTS.md` does **not** exist:
+   - Ask: **"Create VIBE-TRACKER-AGENTS.md with Vibe Tracker workflow? (y/N)"**
+   - **Yes** → generate from `VIBE-TRACKER-AGENTS-TEMPLATE.md`
    - **No** → skip
-2. If `AGENTS.md` **exists**:
+2. If `VIBE-TRACKER-AGENTS.md` **exists**:
    - Print template snippet to console:
      ```
-     AGENTS.md already exists. Add this section to it:
+     VIBE-TRACKER-AGENTS.md already exists. Add this section to it:
 
      --- template content ---
      ```
@@ -186,7 +186,7 @@ function color(color: string, text: string): string {
 ## Implementation Order
 
 1. **JSONC support** — add `parseJSONC()` to `config.ts`, update `findConfigFile()` and `loadConfig()`
-2. **Create templates** — copy/move `VIBE-TRACKER-SKILL-TEMPLATE.md` and create `VIBE-TRACKER-AGENT-TEMPLATE.md`
+2. **Create templates** — copy/move `VIBE-TRACKER-SKILL-TEMPLATE.md` and create `VIBE-TRACKER-AGENTS-TEMPLATE.md`
 3. **Write consolidated CLI** — new `backend/src/cli.ts` with all init + start logic
 4. **Thin wrapper** — update `vibe-tracker.cjs` to 5-line wrapper
 5. **Delete duplicate** — remove `vibe-tracker.ts`
@@ -223,7 +223,7 @@ function color(color: string, text: string): string {
 
 **Two new templates** shipped with the package:
 - `VIBE-TRACKER-SKILL-TEMPLATE.md` — agent rules for how to use the tracker
-- `VIBE-TRACKER-AGENT-TEMPLATE.md` — AGENTS.md workflow template with `{PORT}` placeholder
+- `VIBE-TRACKER-AGENTS-TEMPLATE.md` — VIBE-TRACKER-AGENTS.md workflow template with `{PORT}` placeholder
 
 **Color-coded prompts** using ANSI escape codes (cyan questions, green success, yellow warnings, bold file paths) — zero external dependencies
 

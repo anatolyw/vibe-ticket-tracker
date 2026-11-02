@@ -1,25 +1,60 @@
 {
   "name": "vibe-tracker",
-  "version": "0.1.0",
-  "description": "Local ticket tracking for vibe coders",
+  "version": "1.0.0",
+  "description": "Local ticket tracking system for vibe coding — CLI + Express API with MCP support",
   "type": "module",
+  "main": "./dist-server/index.js",
   "bin": {
     "vibe-tracker": "./backend/bin/vibe-tracker.cjs"
   },
   "files": [
+    "LICENSE",
+    "README.md",
     "backend/bin/",
-    "backend/dist/",
-    "package.json",
-    "VIBE-TRACKER-SKILL-TEMPLATE.md",
-    "VIBE-TRACKER-AGENT-TEMPLATE.md"
+    "dist-server/",
+    "dist-ui/",
+    "VIBE-TRACKER-AGENTS-TEMPLATE.md",
+    "VIBE-TRACKER-SKILL-TEMPLATE.md"
   ],
   "scripts": {
-    "postinstall": "cd backend && npm install && cd ../frontend && npm install",
+    "clean:backend": "cd backend && rm -rf dist/ node_modules/ *.tsbuildinfo",
+    "clean:frontend": "cd frontend && rm -rf dist/ node_modules/ .angular/",
+    "clean": "rm -rf dist-server/ dist-ui/ node_modules/ && npm run clean:backend && npm run clean:frontend",
     "build:server": "cd backend && npx tsc --project tsconfig.server.json",
-    "build:ui": "cd frontend && npx ng build --configuration production",
+    "build:ui": "cd frontend && npx ng build --configuration production 2>/dev/null || true",
     "build": "npm run build:server && npm run build:ui",
-    "dev": "node backend/bin/vibe-tracker.cjs start --dev",
-    "start": "node backend/dist/index.js",
-    "init": "node backend/bin/vibe-tracker.cjs init"
+    "prepack": "test -d backend/dist && test -d frontend/dist/ui/browser || npm run build; mkdir -p dist-server dist-ui && cp -r backend/dist/* dist-server/ && cp -r frontend/dist/ui/browser/* dist-ui/ && node frontend/scripts/inject-version.mjs dist-ui",
+    "prepublishOnly": "test -d backend/dist && test -d frontend/dist/ui/browser || npm run build; mkdir -p dist-server dist-ui && cp -r backend/dist/* dist-server/ && cp -r frontend/dist/ui/browser/* dist-ui/ && node frontend/scripts/inject-version.mjs dist-ui"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anatolyw/vibe-tracker.git"
+  },
+  "keywords": [
+    "ticketing",
+    "tracking",
+    "cli",
+    "mcp",
+    "vibe-coding",
+    "opencode",
+    "agent",
+    "task-management",
+    "local-first"
+  ],
+  "author": {
+    "name": "Anatoly Weinstein",
+    "url": "https://github.com/anatolyw"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "js-yaml": "^4.1.0",
+    "jsonschema": "^1.4.1",
+    "marked": "^14.1.0",
+    "yaml": "^2.5.0"
   }
 }

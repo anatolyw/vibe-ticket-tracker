@@ -80,7 +80,7 @@ export function createMCPEndpoint(config: VibeTrackerConfig, baseDir: string): R
         },
         serverInfo: {
           name: 'vibe-tracker',
-          version: '0.1.0',
+          version: '1.0.0',
         },
       };
 

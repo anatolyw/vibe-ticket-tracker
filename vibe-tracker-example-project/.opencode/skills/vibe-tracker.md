@@ -4,7 +4,7 @@ description: Defines the core principles of "vibe coding" when using a vibe-trac
 license: MIT
 metadata:
   author: Copyright Anatoly Weinstein
-  version: '1.0'
+  version: '1.0.0'
 ---
 
 # Vibe Tracker Skill — Agent Rules

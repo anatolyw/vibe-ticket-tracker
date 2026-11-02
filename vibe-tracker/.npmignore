@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+
+# Source code
+backend/src/
+frontend/src/
+frontend/e2e/
+
+# Build config
+frontend/angular.json
+frontend/tsconfig*.json
+backend/tsconfig*.json
+
+# Development files
+.git/
+.env
+.env.local
+.env.example
+opencode.jsonc
+AGENTS.md
+
+# Test artifacts
+test-results/
+tmp/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Managed by the tool
+.vibe-tracker/
+
+# Angular cache
+.angular/
+prerendered-routes.json
+
+# Backend sub-project
+backend/e2e/
+backend/node_modules/
+backend/package*.json
+backend/playwright.config.ts
+backend/README.md
+backend/tsconfig*.json
+backend/src/
+
+# Frontend sub-project
+frontend/node_modules/
+frontend/package*.json
+frontend/playwright.config.ts
+frontend/postcss.config.js
+frontend/postcss.config.json
+frontend/public/
+frontend/README.md
+frontend/src/
+frontend/e2e/

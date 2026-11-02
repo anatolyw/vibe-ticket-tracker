@@ -10,7 +10,7 @@
     }
   },
   "instructions": [
-    "./AGENTS.md",
+    "./VIBE-TRACKER-AGENTS.md",
     "./.opencode/skills/vibe-tracker.md"
   ]
 }

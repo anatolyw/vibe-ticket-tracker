@@ -1,12 +1,14 @@
 # Vibe Tracker Workspace
 
-A local ticket tracking system for vibe coders, with a CLI, REST API, MCP integration, and web UI — plus a demo project showing how to use it.
+A local ticket tracking system for vibe coders, featuring a CLI, REST API, MCP integration, and web UI — plus a demo project that shows how to use it.
+
+This project was developed inside [vibe-sandbox](https://github.com/anatolyw/vibe-sandbox) — an easy container for sandboxing LLM agents.
 
 ## Projects
 
 | Project | Description |
 |---|---|
-| [**vibe-tracker**](vibe-tracker/README.md) | The main package — CLI, Express API, Angular UI, and MCP server |
+| [**vibe-tracker**](vibe-tracker/README.md) | The main npm package — CLI, Express API, Angular UI, and MCP server |
 | [**vibe-tracker-example-project**](vibe-tracker-example-project/README.md) | Demo project showing how to integrate Vibe Tracker into a real project |
 
 ## What It Does

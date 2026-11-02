@@ -1,14 +1,15 @@
 {
   "name": "vibe-tracker-example-project",
   "version": "1.0.0",
-  "private": true,
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "vibe:init": "vibe-tracker init",
-    "vibe:start": "vibe-tracker start",
-    "vibe": "vibe-tracker start",
-    "vibe:open": "P=$(grep 'VIBE_TRACKER_PORT' vibe-tracker.jsonc vibe-tracker.json 2>/dev/null | sed 's/.*: *\\([0-9]*\\),.*/\\1/' | head -1) && P=${P:-61000} && open http://localhost:$P || xdg-open http://localhost:$P || start http://localhost:$P"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "vibe-tracker-ui": "file:../vibe-tracker"
+    "vibe-tracker": "file:../vibe-tracker/vibe-tracker-1.0.0.tgz"
   }
 }

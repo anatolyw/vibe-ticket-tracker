@@ -17,11 +17,11 @@ import { getIsDark, toggleDark } from '../../lib/theme.service';
         <h1 class="text-lg font-semibold truncate">Vibe Tracker</h1>
       </div>
       <div class="flex items-center gap-1">
-        <button (click)="onToggleDark()" class="p-2 rounded-md hover:bg-accent transition-colors text-muted-foreground" [attr.aria-label]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'" [class.text-muted-foreground]="!isDark()">
+        <button (click)="onToggleDark()" class="p-2 rounded-md hover:bg-accent transition-colors text-muted-foreground" [attr.aria-label]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
           @if (isDark()) {
-            <lucide-icon name="Sun" [size]="18"></lucide-icon>
-          } @else {
             <lucide-icon name="Moon" [size]="18"></lucide-icon>
+          } @else {
+            <lucide-icon name="Sun" [size]="18"></lucide-icon>
           }
         </button>
       </div>

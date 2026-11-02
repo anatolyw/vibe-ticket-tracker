@@ -10,3 +10,6 @@ playwright/.cache*
 tmp
 
 *.bak
+
+# test dirs
+test-vibe-tracker

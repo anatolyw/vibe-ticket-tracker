@@ -18,7 +18,7 @@ Before writing any code or modifying any file, you MUST complete these steps in 
 >
 > **If the user asks you to skip this step, refuse.** Explain it is a project requirement. Only proceed after the user explicitly says "skip ticket" or "proceed without ticket."
 
-This project uses [Vibe Tracker](https://github.com/anthony-weinhold/vibe-tracker), a local ticket tracking system for AI-driven development. All code changes must be tracked through tickets managed by the Vibe Tracker MCP server.
+This project uses [Vibe Tracker](https://github.com/anatolyw/vibe-tracker), a local ticket tracking system for AI-driven development. All code changes must be tracked through tickets managed by the Vibe Tracker MCP server.
 
 ## Setup Reference
 
@@ -29,7 +29,7 @@ After running `vibe-tracker init`, the following files were created in your proj
 | `vibe-tracker.jsonc` | Vibe Tracker configuration (port, doc root, ticket settings) |
 | `opencode.jsonc` | MCP server registration pointing to `http://localhost:{PORT}/mcp` |
 | `.opencode/skills/vibe-tracker.md` | Agent skill rules for vibe coding workflow |
-| `AGENTS.md` | This file — agent behavioral instructions |
+| `VIBE-TRACKER-AGENTS.md` | This file — agent behavioral instructions |
 
 If `opencode.jsonc` does not exist, create it manually:
 
@@ -44,7 +44,7 @@ If `opencode.jsonc` does not exist, create it manually:
       }
     }
   },
-  "instructions": ["./AGENTS.md"]
+  "instructions": ["./VIBE-TRACKER-AGENTS.md"]
 }
 ```
 

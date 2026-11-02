@@ -7,6 +7,6 @@ const { spawn } = require('child_process');
 const path = require('path');
 
 spawn(process.execPath, [
-  path.resolve(__dirname, '..', 'dist', 'cli.js'),
+  path.resolve(__dirname, '..', '..', 'dist-server', 'cli.js'),
   ...process.argv.slice(2),
 ], { stdio: 'inherit' });

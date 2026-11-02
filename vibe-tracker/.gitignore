@@ -1,9 +1,13 @@
+# Build output
+dist-server/
+dist-ui/
+dist/
+out-tsc/
+*.tgz
+
 # Dependencies
 node_modules/
 
-# Build output
-dist/
-out-tsc/
 
 # Angular
 browser/
@@ -30,3 +34,8 @@ npm-debug.log*
 
 # Vibe Tracker (managed by the tool)
 .vibe-tracker/
+
+# Test/Temp
+test-results/
+tmp/
+

@@ -79,9 +79,9 @@ function closeRl(): void {
 
 function readTemplate(name: string): string {
   const cliPath = resolve(__cliDir, 'cli.js');
-  const base = dirname(cliPath); // backend/dist
-  // Templates are shipped at package root, one level above backend/
-  const templateDir = resolve(base, '..', '..');
+  const base = dirname(cliPath); // dist-server/
+  // Templates are shipped at package root, one level above dist-server/
+  const templateDir = resolve(base, '..');
   const path = resolve(templateDir, name);
   if (!existsSync(path)) {
     console.error(warn(`Template not found: ${path}`));
@@ -113,7 +113,7 @@ function generateOpencodeConfig(port: number, skillPath: string): string {
         },
       },
       instructions: [
-        './AGENTS.md',
+        './VIBE-TRACKER-AGENTS.md',
         skillRel,
       ],
     },
@@ -125,16 +125,17 @@ function generateOpencodeConfig(port: number, skillPath: string): string {
 function mergeOpencode(existing: string, port: number, skillPath: string): string {
   try {
     const parsed: Record<string, unknown> = JSON.parse(existing);
-    const agentsPath = './AGENTS.md';
+    const agentsPath = './VIBE-TRACKER-AGENTS.md';
 
-    // Handle instructions array — add ./AGENTS.md and skill path if not present
+    // Handle instructions array — add ./VIBE-TRACKER-AGENTS.md and skill path if not present
     if (Array.isArray(parsed.instructions)) {
-      if (!parsed.instructions.includes(agentsPath)) {
-        parsed.instructions.push(agentsPath);
-      }
+      const instructions = parsed.instructions as string[];
+      // Remove old references
+      const filtered = instructions.filter((i: string) => i !== agentsPath);
+      parsed.instructions = [...filtered, agentsPath];
       const skillRel = './' + relative('.', skillPath);
-      if (!parsed.instructions.includes(skillRel)) {
-        parsed.instructions.push(skillRel);
+      if (!filtered.includes(skillRel)) {
+        (parsed.instructions as string[]).push(skillRel);
       }
     } else {
       parsed.instructions = [agentsPath, './' + relative('.', skillPath)];
@@ -176,8 +177,9 @@ function mergeOpencode(existing: string, port: number, skillPath: string): strin
 function generateUIDistPath(): string {
   // Find UI dist relative to vibe-tracker package root
   const cliPath = resolve(__cliDir, 'cli.js');
-  const pkgRoot = dirname(dirname(dirname(cliPath))); // vibe-tracker/
+  const pkgRoot = dirname(dirname(cliPath)); // dist-server/ -> package root (e.g., node_modules/vibe-tracker/)
   const candidates = [
+    resolve(pkgRoot, 'dist-ui'),
     resolve(pkgRoot, 'frontend', 'dist', 'ui', 'browser'),
     resolve(pkgRoot, 'frontend', 'dist', 'ui'),
     resolve(pkgRoot, 'frontend', 'dist'),
@@ -185,7 +187,7 @@ function generateUIDistPath(): string {
   for (const c of candidates) {
     if (existsSync(c)) return c;
   }
-  return resolve(pkgRoot, 'frontend', 'dist', 'ui', 'browser');
+  return resolve(pkgRoot, 'dist-ui');
 }
 
 // ── Init command ─────────────────────────────────────────────────────
@@ -325,22 +327,33 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
     }
   }
 
-  // ── Step 4: AGENTS.md ─────────────────────────────────────────
-  const agentsPath = resolve(base, 'AGENTS.md');
+  // ── Step 4: VIBE-TRACKER-AGENTS.md ──────────────────────────────────
+  const agentsPath = resolve(base, 'VIBE-TRACKER-AGENTS.md');
   let agentsGenerated = false;
 
   if (existsSync(agentsPath)) {
-    console.log(`\n${warn('AGENTS.md already exists at \'' + agentsPath + '\'.')}`);
-    console.log('Add this section to it manually:\n');
-    const template = readTemplate('VIBE-TRACKER-AGENT-TEMPLATE.md');
-    console.log(template.replace(/{PORT}/g, String(port)));
-  } else {
-    const createAgents = await askYesNo('Create AGENTS.md with Vibe Tracker workflow?');
-    if (createAgents) {
-      const template = readTemplate('VIBE-TRACKER-AGENT-TEMPLATE.md');
+    const overwriteAgents = await askYesNo('VIBE-TRACKER-AGENTS.md at \'' + agentsPath + '\' already exists. Overwrite?');
+    if (overwriteAgents) {
+      const bak = agentsPath + '.bak';
+      renameSync(agentsPath, bak);
+      console.log(success(`Backed up → ${bak}`));
+      const template = readTemplate('VIBE-TRACKER-AGENTS-TEMPLATE.md');
       const withPort = template.replace(/{PORT}/g, String(port));
       writeFileSync(agentsPath, withPort, 'utf-8');
-      console.log(success(`AGENTS.md written → ${agentsPath}`));
+      console.log(success(`VIBE-TRACKER-AGENTS.md written → ${agentsPath}`));
+      agentsGenerated = true;
+    } else {
+      console.log('\n' + c(C.yellow, 'Save manually:'));
+      const template = readTemplate('VIBE-TRACKER-AGENTS-TEMPLATE.md');
+      console.log(template.replace(/{PORT}/g, String(port)));
+    }
+  } else {
+    const createAgents = await askYesNo('Create VIBE-TRACKER-AGENTS.md with Vibe Tracker workflow?');
+    if (createAgents) {
+      const template = readTemplate('VIBE-TRACKER-AGENTS-TEMPLATE.md');
+      const withPort = template.replace(/{PORT}/g, String(port));
+      writeFileSync(agentsPath, withPort, 'utf-8');
+      console.log(success(`VIBE-TRACKER-AGENTS.md written → ${agentsPath}`));
       agentsGenerated = true;
     }
   }
@@ -348,18 +361,18 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
   // ── Step 5: Summary ───────────────────────────────────────────
   console.log('\n' + c(C.bold, '═══ Setup Complete ═══\n'));
   console.log(c(C.bold, 'Next steps:'));
-  console.log(`  ${c(C.green, 'vibe-tracker start')}    — Start the server`);
-  console.log(`  ${c(C.green, 'npm run vibe:open')}     — Open in browser (port ${port})`);
+  console.log(`  ${c(C.green, 'npx vibe-tracker start')}    — Start the server`);
+  console.log(`  Open in browser http://localhost:${port}`);
 
+  if (agentsGenerated) {
+    console.log(`  Agent file → ${c(C.bold, 'VIBE-TRACKER-AGENTS.md')}`);
+  }
   if (skillGenerated) {
     const skillRel = relative(base, skillPath);
     console.log(`  Skill file → ${c(C.bold, skillRel)}`);
   }
   if (mcpGenerated) {
-    console.log(`  MCP config → ${c(C.bold, 'opencode.jsonc')}`);
-  }
-  if (agentsGenerated) {
-    console.log(`  AGENTS.md → ${c(C.bold, 'AGENTS.md')}`);
+    console.log(`  MCP config for OpenCode → ${c(C.bold, 'opencode.jsonc')}`);
   }
 
   console.log('');
@@ -442,14 +455,14 @@ if (command === 'init') {
   const devMode = args.includes('--dev');
   runStart(baseDir, port, devMode);
 } else {
-  console.log(c(C.bold, 'Vibe Tracker v0.1.0'));
+  console.log(c(C.bold, 'Vibe Tracker v1.0.0'));
   console.log(c(C.bold, 'Usage:'));
-  console.log(`  ${c(C.bold, 'vibe-tracker init')}  [--port <n>]   Initialize in current project`);
-  console.log(`  ${c(C.bold, 'vibe-tracker start')}  [--port <n>] [--dev]  Start the server`);
-  console.log(`  ${c(C.bold, 'vibe-tracker --help')}  Show this help`);
+  console.log(`  ${c(C.bold, 'npx vibe-tracker init')}  [--port <n>]   Initialize in current project`);
+  console.log(`  ${c(C.bold, 'npx vibe-tracker start')}  [--port <n>] [--dev]  Start the server`);
+  console.log(`  ${c(C.bold, 'npx vibe-tracker --help')}  Show this help`);
   console.log(`\n${c(C.yellow, 'Interactive init wizard:')}
-  vibe-tracker init
-  vibe-tracker init -p 61001
+  npx vibe-tracker init
+  npx vibe-tracker init -p 61001
 `);
   closeRl();
 }
