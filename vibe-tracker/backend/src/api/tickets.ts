@@ -97,7 +97,7 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
   // POST /api/tickets
   router.post('/', (req: Request, res: Response) => {
     const { title, type = 'issue', description } = req.body;
-    if (!title || typeof title !== 'string') {
+    if (!title || typeof title !== 'string' || !title.trim()) {
       res.status(400).json({ error: 'Title is required' });
       return;
     }

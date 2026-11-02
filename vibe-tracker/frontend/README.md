@@ -77,6 +77,8 @@ npx playwright test --headed
 kill %1   # or: pkill -f "node backend/dist/index.js"
 ```
 
+**Note:** The backend also has its own E2E tests in `backend/e2e/` that test API and MCP features directly (see the [root README](../README.md) for details).
+
 ## Styles
 
 - **Tailwind CSS v4** with `@tailwindcss/postcss` for utility-first CSS

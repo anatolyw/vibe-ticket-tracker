@@ -150,7 +150,7 @@ cd frontend && npx ng build --configuration production --watch
 cd backend && npx tsc --project tsconfig.server.json --watch
 ```
 
-### E2E Tests
+### Frontend E2E Tests
 
 **Install Playwright browsers** (required once per machine, run from `frontend/`):
 
@@ -193,6 +193,26 @@ npx playwright test --ui
 # Kill the background server
 kill %1   # or: pkill -f "node backend/dist/index.js"
 ```
+
+### Backend E2E Tests
+
+**Build the server** (first time):
+
+```bash
+cd backend && npx playwright install
+npm run build:server
+```
+
+**Run the tests** (from `backend/`):
+
+```bash
+npx playwright test
+
+# Interactive mode
+npx playwright test --headed
+```
+
+Backend E2E tests run against an isolated server instance on port **61001** with a clean temporary ticket store. They cover REST API endpoints, MCP tools/resources, and race conditions.
 
 ## Project Structure
 
