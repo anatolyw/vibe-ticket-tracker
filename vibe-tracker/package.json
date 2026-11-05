@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./dist-server/index.js",
   "bin": {
-    "vibe-tracker": "./backend/bin/vibe-tracker.cjs"
+    "vibe-tracker": "backend/bin/vibe-tracker.cjs"
   },
   "files": [
     "LICENSE",
