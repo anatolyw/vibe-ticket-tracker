@@ -6,29 +6,43 @@ Server-side API, MCP endpoint, and ticket storage engine.
 
 ```
 backend/
-├── bin/          — CLI entry point (vibe-tracker init/start)
+├── bin/          — CLI wrapper (delegates to compiled CLI in dist-server/)
+├── e2e/          — End-to-end API and MCP tests
 ├── src/
 │   ├── api/      — Express REST API routes
 │   ├── mcp/      — MCP (Model Context Protocol) endpoint
 │   ├── storage/  — Ticket CRUD, schema validation, YAML/JSON parsing
+│   ├── cli.ts    — CLI entry point (init/start commands)
 │   └── index.ts  — Express app factory & server launcher
 ├── tsconfig.server.json
-├── README.md
-└── .gitignore
+├── .gitignore
+└── package.json
 ```
 
 ## Commands
 
-From repo root:
-```bash
-npm run build:server   # Compile TypeScript → backend/dist/
-npm start              # Start the server from repo root
-```
+All scripts are run from the **repo root**.
 
-From `backend/` directory:
 ```bash
-npm run build          # Compile TypeScript → dist/
-node ../dist/index.js  # Start the server directly
+# Build the TypeScript server
+npm run build:server
+
+# Build server and UI together
+npm run build
+
+# Build both, then copy server to dist-server/ and start via CLI
+npm run build 
+mkdir -p dist-server 
+cp -r backend/dist/* dist-server/ 
+node dist-server/cli.js start
+
+# Start the server (from CLI entry)
+node dist-server/cli.js start            # default port 61000
+node dist-server/cli.js start --port 61001
+node dist-server/cli.js start --dev      # dev mode, no child process
+
+# Run E2E tests (requires built server running)
+cd backend && npx playwright test
 ```
 
 ## API

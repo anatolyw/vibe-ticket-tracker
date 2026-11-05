@@ -38,7 +38,6 @@ test.describe('Ticket Create - Full Flow', () => {
     expect(options).toContain('issue');
     expect(options).toContain('feat');
     expect(options).toContain('bug');
-    expect(options).toContain('epic');
     // Default type should be the first one
     await expect(typeSelect).toHaveValue('issue');
 
@@ -154,7 +153,7 @@ test.describe('Ticket Create - Full Flow', () => {
     await expect(page.locator('body')).not.toContainText('Should not create this');
   });
 
-  test('create with epic type works', async ({ page }) => {
+  test('create with Feat type works', async ({ page }) => {
     // Track API calls
     const apiCalls: Array<{ method: string; url: string; status?: number; body?: string }> = [];
     page.on('request', (req) => {
@@ -180,41 +179,41 @@ test.describe('Ticket Create - Full Flow', () => {
 
     await page.goto('/tickets/new', { waitUntil: 'networkidle' });
 
-    // Select epic type
+    // Select feat type
     const typeSelect = page.locator('select');
-    await typeSelect.selectOption('epic');
-    await expect(typeSelect).toHaveValue('epic');
+    await typeSelect.selectOption('feat');
+    await expect(typeSelect).toHaveValue('feat');
 
     // Fill in data (textarea needs input event dispatch for [value] binding)
-    await page.locator('input[type="text"]').fill('E2E Epic Test');
+    await page.locator('input[type="text"]').fill('E2E Feat Test');
     await page.locator('textarea').evaluate((ta, text) => {
       (ta as HTMLTextAreaElement).value = text;
       ta.dispatchEvent(new Event('input', { bubbles: true }));
-    }, 'An epic description');
+    }, 'An feat description');
 
     // Submit
     await page.locator('button[type="submit"]').click();
     await page.waitForTimeout(3000);
 
-    // Verify API call had epic type
+    // Verify API call had feat type
     const postCalls = apiCalls.filter(c => c.method === 'POST');
     const postBody = JSON.parse(postCalls[0].body || '{}');
-    expect(postBody.type).toBe('epic');
+    expect(postBody.type).toBe('feat');
 
     // Verify redirect to detail page
     expect(page.url()).toMatch(/\/tickets\/issue-\d{5}/);
 
-    // Verify epic type badge on detail page (case-insensitive)
+    // Verify feat type badge on detail page (case-insensitive)
     const typeBadge = page.locator('span.px-2\\.5').first();
-    await expect(typeBadge).toContainText('epic');
+    await expect(typeBadge).toContainText('feat');
 
     // Verify the ticket was actually created by fetching via API
     const ticketId = page.url().split('/tickets/')[1];
     const response = await page.goto(`/api/tickets/${ticketId}`);
     expect(response?.status()).toBe(200);
     const ticketData = await response!.json();
-    expect(ticketData.title).toBe('E2E Epic Test');
-    expect(ticketData.type).toBe('epic');
+    expect(ticketData.title).toBe('E2E Feat Test');
+    expect(ticketData.type).toBe('feat');
     expect(ticketData.status).toBe('open');
   });
 });

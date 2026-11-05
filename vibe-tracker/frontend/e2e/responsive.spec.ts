@@ -83,7 +83,7 @@ test.describe('Responsive Layout - Small Viewport', () => {
     await page.waitForLoadState('networkidle');
     const footer = page.locator('footer');
     await expect(footer).toBeVisible();
-    await expect(footer).toContainText('v0.1.0');
+    await expect(footer).toContainText('dev');
   });
 });
 

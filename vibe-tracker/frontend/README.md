@@ -40,50 +40,38 @@ frontend/
 **Install Playwright browsers** (required once per machine):
 
 ```bash
-# macOS
-npx playwright install chromium
-
 # Linux (installs system deps + browser in one step)
 npx playwright install --with-deps chromium
 ```
 
-## Build
+## Commands
 
-From repo root:
-```bash
-npm run build:ui       # Build Angular production bundle
-```
-
-From `frontend/` directory:
-```bash
-npm run build          # Build production bundle (dist/ui/browser/)
-```
-
-## E2E Tests
+All scripts are run from the **repo root** unless noted.
 
 ```bash
-# Build and start the server (from repo root)
-npm run build && node backend/dist/index.js &
+# Build the Angular production bundle
+npm run build:ui
 
-# From frontend/
-npm run test:e2e
+# Full build (server + UI)
+npm run build
 
-# Interactive mode (opens the browser)
-npx playwright test --headed
+# Start the server so the UI is served (from $PROJ/vibe-tracker dir)
+mkdir -p dist-server
+cp -r backend/dist/* dist-server/
+node dist-server/cli.js start --port 61000
+
+# Run E2E tests (requires backend server running on port 61000)
+cd frontend && npx playwright test
+
+# Interactive mode (opens browser)
+cd frontend && npx playwright test --headed
 ```
-
-**Clean up:**
-```bash
-kill %1   # or: pkill -f "node backend/dist/index.js"
-```
-
-**Note:** The backend also has its own E2E tests in `backend/e2e/` that test API and MCP features directly (see the [root README](../README.md) for details).
 
 ## Styles
 
 - **Tailwind CSS v4** with `@tailwindcss/postcss` for utility-first CSS
 - **Dark mode** via CSS class toggle on `<html>`
-- **Prose styles** for markdown content in ticket detail view (hand-written, not from `@tailwindcss/typography`)
+- **Prose styles** for markdown content in ticket detail view (hand-written)
 - **PostCSS** config: `postcss.config.json` (required by Angular — not `.js`)
 
 ## Components
