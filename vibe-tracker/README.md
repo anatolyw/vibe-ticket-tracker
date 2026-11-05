@@ -114,6 +114,14 @@ vibe-tracker --help
 | PUT | `/api/tickets/:id` | Update a ticket |
 | DELETE | `/api/tickets/:id` | Delete a ticket |
 
+## Default Ticket Types
+
+- **issue** — General task, request, or problem
+- **feat** — New feature or enhancement
+- **bug** — Fixing an existing bug
+
+Customize in `vibe-tracker.jsonc` under `VIBE_TRACKER_TICKET_TYPE_OPTIONS`.
+
 ### Query Parameters (list)
 
 - `status`: `open` | `closed`
@@ -131,21 +139,6 @@ Access AI tools at `http://localhost:61000/mcp`:
 **Tools:** `vibe_tracker_create_ticket`, `vibe_tracker_update_ticket`, `vibe_tracker_delete_ticket`, `vibe_tracker_list_tickets`, `vibe_tracker_get_ticket`
 
 **Resources:** `vibe://tickets/{id}`, `vibe://tickets/{id}/raw`, `vibe://tickets/{id}/metadata`, `vibe://tickets/`, `vibe://config`
-
-## Project Structure
-
-```
-vibe-tracker/
-├── backend/                    # Server, CLI, API
-│   ├── bin/
-│   │   └── vibe-tracker.cjs    # CLI entry point
-│   ├── src/                    # TypeScript source
-│   └── dist/                   # Compiled output
-├── frontend/                   # Angular SPA
-│   └── dist/ui/browser/        # Built application
-├── VIBE-TRACKER-AGENTS-TEMPLATE.md
-└── VIBE-TRACKER-SKILL-TEMPLATE.md
-```
 
 ## Development
 

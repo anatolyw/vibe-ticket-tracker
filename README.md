@@ -9,7 +9,7 @@ This project was developed inside [vibe-sandbox](https://github.com/anatolyw/vib
 | Project | Description |
 |---|---|
 | [**vibe-tracker**](vibe-tracker/README.md) | The main npm package — CLI, Express API, Angular UI, and MCP server |
-| [**vibe-tracker-example-project**](vibe-tracker-example-project/README.md) | Demo project showing how to integrate Vibe Tracker into a real project |
+| [**vibe-tracker-example-project**](vibe-tracker-example-project/README.md) | Demo project showing how to integrate Vibe Tracker into a real project. Example of prompt, generated code and documentation artifacts |
 
 ## What It Does
 
@@ -27,6 +27,9 @@ Designed for [OpenCode v2+](https://github.com/anomalyco/opencode) — the open 
 ## Quick Start
 
 ```bash
+# Add vibe-tracker to your project
+npm install vibe-tracker
+
 # Initialize in a project
 vibe-tracker init
 
