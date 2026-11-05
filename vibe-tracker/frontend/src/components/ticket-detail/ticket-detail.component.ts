@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
 import { LucideIconComponent } from '../../lib/lucide-icon.component';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { ApiService, UpdateTicketInput } from '../../lib/api.service';
+import { ApiService, UpdateTicketInput, TicketTypeOption } from '../../lib/api.service';
 import { marked } from 'marked';
 
 @Component({
@@ -26,7 +26,7 @@ import { marked } from 'marked';
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-2 flex-wrap">
               <span class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [ngClass]="ticket()!.type === 'issue' ? 'bg-info/15 text-info' : ticket()!.type === 'feat' ? 'bg-purple/15 text-purple' : 'bg-destructive/15 text-destructive'">
+                [class]="getTypeBadgeClass(ticket()!.type)">
                 {{ ticket()!.type }}
               </span>
               <span class="px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -80,11 +80,11 @@ import { marked } from 'marked';
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium mb-1">Type</label>
-                <select [value]="editData().type" (change)="onEditField('type', $event)"
+                <select (change)="onEditField('type', $event)"
                   class="w-full px-3 py-2 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-                  <option value="issue">Issue</option>
-                  <option value="feat">Feat</option>
-                  <option value="bug">Bug</option>
+                  @for (t of ticketTypes(); track t.value) {
+                    <option [value]="t.value" [selected]="t.value === editData().type">{{ t.label }}</option>
+                  }
                 </select>
               </div>
               <div>
@@ -118,12 +118,30 @@ export class TicketDetailComponent implements OnInit {
   isEditing = signal(false);
   saving = signal(false);
 
-  editData = signal({ title: '', type: 'issue', status: 'open' as 'open' | 'closed', body: '' });
+  editData = signal({ title: '', type: '', status: 'open' as 'open' | 'closed', body: '' });
   renderedContent = signal('');
+  ticketTypes: WritableSignal<TicketTypeOption[]> = signal([]);
 
   ngOnInit(): void {
+    this.loadTicketTypes();
     const id = this.route.snapshot.params['id'];
     this.loadTicket(id);
+  }
+
+  private loadTicketTypes(): void {
+    this.api.getTicketTypes().subscribe({
+      next: (types) => {
+        this.ticketTypes.set(types.map(type => ({
+          label: this.formatTypeLabel(type),
+          value: type,
+        })));
+      },
+      error: () => {},
+    });
+  }
+
+  private formatTypeLabel(type: string): string {
+    return type.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
   private loadTicket(id: string): void {
@@ -206,6 +224,16 @@ export class TicketDetailComponent implements OnInit {
       next: () => this.router.navigate(['/tickets']),
       error: () => alert('Failed to delete ticket'),
     });
+  }
+
+  /** Get CSS class for a type badge — consistent with ticket-list */
+  getTypeBadgeClass(type: string): string {
+    const typeColors: Record<string, string> = {
+      'issue': 'bg-info/15 text-info',
+      'feat': 'bg-purple/15 text-purple',
+      'bug': 'bg-destructive/15 text-destructive',
+    };
+    return typeColors[type] || 'bg-muted/15 text-muted-foreground';
   }
 
   formatDate(dateStr: string): string {

@@ -55,6 +55,12 @@ export interface UpdateTicketInput {
   body?: string;
 }
 
+/** Available ticket types from the backend config */
+export interface TicketTypeOption {
+  label: string;
+  value: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private baseUrl = '/api/tickets';
@@ -103,6 +109,11 @@ export class ApiService {
 
   deleteTicket(id: string): Observable<{ success: boolean; id: string }> {
     return this.http.delete<{ success: boolean; id: string }>(`${this.baseUrl}/${id}`);
+  }
+
+  /** Fetch all configured ticket type options from the backend */
+  getTicketTypes(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/types`);
   }
 
   toggleStatus(id: string): Observable<Ticket> {

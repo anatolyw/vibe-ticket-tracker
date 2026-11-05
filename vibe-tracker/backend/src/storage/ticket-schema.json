@@ -20,8 +20,7 @@
     },
     "type": {
       "type": "string",
-      "description": "Ticket type from the configured type options",
-      "enum": ["issue", "feat", "bug"]
+      "description": "Ticket type from the configured type options (enum set at runtime from VIBE_TRACKER_TICKET_TYPE_OPTIONS config)"
     },
     "status": {
       "type": "string",

@@ -8,11 +8,10 @@ import {
   updateTicket,
   deleteTicket,
   VibeTrackerConfig,
-  Ticket,
   TicketFrontmatter,
   getDocRoot,
 } from '../storage/ticket.js';
-import { resolve } from 'node:path';
+import { normalizeTicketType } from '../storage/config.js';
 
 export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): Router {
   const router = Router();
@@ -65,6 +64,11 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
     });
   });
 
+  // GET /api/tickets/types — list all configured ticket types
+  router.get('/types', (req: Request, res: Response) => {
+    res.json(config.VIBE_TRACKER_TICKET_TYPE_OPTIONS);
+  });
+
   // GET /api/tickets/summaries
   router.get('/summaries', (req: Request, res: Response) => {
     const summaries = getTicketSummaries(config, docRoot);
@@ -96,12 +100,13 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
 
   // POST /api/tickets
   router.post('/', (req: Request, res: Response) => {
-    const { title, type = 'issue', description } = req.body;
+    const { title, type, description } = req.body;
     if (!title || typeof title !== 'string' || !title.trim()) {
       res.status(400).json({ error: 'Title is required' });
       return;
     }
-    const result = createTicket(config, docRoot, title, type, description || '');
+    const resolvedType = type ? normalizeTicketType(type as string) : normalizeTicketType(config.VIBE_TRACKER_TICKET_TYPE_OPTIONS[0]);
+    const result = createTicket(config, docRoot, title, resolvedType, description || '');
     if (result === null) {
       res.status(500).json({ error: 'Failed to create ticket' });
       return;
@@ -118,7 +123,7 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
     const { title, type, status, body } = req.body;
     const updates: Partial<TicketFrontmatter & { body?: string }> = {};
     if (title !== undefined) updates.title = title;
-    if (type !== undefined) updates.type = type;
+    if (type !== undefined) updates.type = normalizeTicketType(type as string);
     if (status !== undefined) updates.status = status;
     if (body !== undefined) updates.body = body;
 

@@ -159,6 +159,7 @@ npm pack
 # Install from the tarball into a test directory
 mkdir /tmp/vibe-tracker-example-project && cd /tmp/vibe-tracker-example-project
 npm init -y
+npm uninstall vibe-tracker 2>/dev/null # clear cache
 npm install /workspace/vibe-tracker/vibe-tracker-1.0.0.tgz
 
 # Verify the CLI works

@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync, unlinkSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
-import { resolve, join, basename } from 'node:path';
+import { resolve, basename } from 'node:path';
 import { parse, stringify } from 'yaml';
 import { marked } from 'marked';
-import { VibeTrackerConfig } from './config.js';
+import { VibeTrackerConfig, normalizeTicketType } from './config.js';
 export type { VibeTrackerConfig };
 import TicketSchema from './ticket-schema.json' with { type: 'json' };
 import { Validator } from 'jsonschema';
@@ -122,11 +122,11 @@ function parseTicketFile(filePath: string, config: VibeTrackerConfig): Ticket | 
   }
 }
 
-function buildContent(frontmatter: Partial<TicketFrontmatter>, body: string): string {
+function buildContent(frontmatter: Partial<TicketFrontmatter>, body: string, config?: VibeTrackerConfig): string {
   const fm: TicketFrontmatter = {
     id: frontmatter.id || '',
     title: frontmatter.title || '',
-    type: frontmatter.type || 'issue',
+    type: frontmatter.type || (config ? config.VIBE_TRACKER_TICKET_TYPE_OPTIONS[0] : 'issue'),
     status: frontmatter.status || 'open',
     created: frontmatter.created || new Date().toISOString(),
     updated: frontmatter.updated || new Date().toISOString(),
@@ -194,7 +194,8 @@ export function getTicketSummaries(config: VibeTrackerConfig, docRoot: string): 
 }
 
 export function createTicket(config: VibeTrackerConfig, docRoot: string, title: string, type: string, description: string): Ticket | { error: string } {
-  if (!config.VIBE_TRACKER_TICKET_TYPE_OPTIONS.includes(type)) {
+  const normalizedType = normalizeTicketType(type);
+  if (!config.VIBE_TRACKER_TICKET_TYPE_OPTIONS.includes(normalizedType)) {
     return { error: `Invalid type "${type}". Allowed: ${config.VIBE_TRACKER_TICKET_TYPE_OPTIONS.join(', ')}` };
   }
 
@@ -215,7 +216,7 @@ export function createTicket(config: VibeTrackerConfig, docRoot: string, title: 
   const frontmatter: Partial<TicketFrontmatter> = {
     id,
     title,
-    type,
+    type: normalizedType,
     status: 'open',
     created: now,
     updated: now,
@@ -225,7 +226,7 @@ export function createTicket(config: VibeTrackerConfig, docRoot: string, title: 
     ? `## Description\n${description}\n\n## Tasks\n- [ ] Plan implementation\n\n## Notes\n- None yet.\n\n## Changes\n### Files modified\n- (pending)\n\n### Code changes summary\n- (pending)\n`
     : `## Description\n\n## Tasks\n- [ ] Plan implementation\n\n## Notes\n- None yet.\n\n## Changes\n### Files modified\n- (pending)\n\n### Code changes summary\n- (pending)\n`;
 
-  const content = buildContent(frontmatter, body);
+  const content = buildContent(frontmatter, body, config);
   const filePath = resolve(docRoot, finalFilename);
   writeFileSync(filePath, content, 'utf-8');
 
@@ -239,7 +240,7 @@ export function updateTicket(config: VibeTrackerConfig, docRoot: string, ticketI
   const updatedFm: Partial<TicketFrontmatter> = {
     id: existing.id,
     title: updates.title ?? existing.title,
-    type: updates.type ?? existing.type,
+    type: updates.type !== undefined ? normalizeTicketType(updates.type) : existing.type,
     status: updates.status ?? existing.status,
     created: existing.created,
     updated: updates.updated ?? new Date().toISOString(),

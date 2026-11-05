@@ -33,11 +33,12 @@ node ../dist/index.js  # Start the server directly
 
 ## API
 
-| Method | Endpoint        | Description           |
-|--------|-----------------|-----------------------|
-| GET    | /api/tickets    | List all tickets      |
-| GET    | /api/tickets/:id| Get single ticket     |
-| POST   | /api/tickets    | Create a ticket       |
-| PUT    | /api/tickets/:id| Update a ticket       |
-| DELETE | /api/tickets/:id| Delete a ticket       |
-| POST   | /mcp            | MCP JSON-RPC endpoint |
+| Method | Endpoint             | Description                      |
+|--------|----------------------|----------------------------------|
+| GET    | /api/tickets         | List all tickets                 |
+| GET    | /api/tickets/types   | List all configured ticket types |
+| GET    | /api/tickets/:id     | Get single ticket                |
+| POST   | /api/tickets         | Create a ticket                  |
+| PUT    | /api/tickets/:id     | Update a ticket                  |
+| DELETE | /api/tickets/:id     | Delete a ticket                  |
+| POST   | /mcp                 | MCP JSON-RPC endpoint            |

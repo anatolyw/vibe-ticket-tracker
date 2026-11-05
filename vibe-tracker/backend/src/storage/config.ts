@@ -90,6 +90,15 @@ export function generateJSONCConfig(config: VibeTrackerConfig): string {
 }
 
 /**
+ * Normalize a ticket type string:
+ * - Trim leading/trailing whitespace
+ * - Replace internal runs of whitespace with a single underscore
+ */
+export function normalizeTicketType(raw: string): string {
+  return raw.trim().replace(/\s+/g, '_');
+}
+
+/**
  * Write a new config file, handling .jsonc/.json rename/backup.
  */
 export function initConfig(

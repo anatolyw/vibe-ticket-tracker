@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
 import { LucideIconComponent } from '../../lib/lucide-icon.component';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { ApiService, TicketSummary } from '../../lib/api.service';
+import { ApiService, TicketSummary, TicketTypeOption } from '../../lib/api.service';
 
 @Component({
   selector: 'app-ticket-list',
@@ -26,12 +26,12 @@ import { ApiService, TicketSummary } from '../../lib/api.service';
           <input type="text" placeholder="Search tickets..." [value]="search()" (input)="onSearch($event)"
             class="w-full pl-9 pr-4 py-2 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
         </div>
-        <select [value]="typeFilter()" (change)="onTypeFilter($event)"
+        <select (change)="onTypeFilter($event)"
           class="px-3 py-2 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="">All Types</option>
-          <option value="issue">Issue</option>
-          <option value="feat">Feat</option>
-          <option value="bug">Bug</option>
+          @for (t of ticketTypes(); track t.value) {
+            <option [value]="t.value">{{ t.label }}</option>
+          }
         </select>
         <select [value]="statusFilter()" (change)="onStatusFilter($event)"
           class="px-3 py-2 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary">
@@ -67,8 +67,7 @@ import { ApiService, TicketSummary } from '../../lib/api.service';
             <a [routerLink]="['/tickets', ticket.id]" class="flex items-center gap-3 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors group">
               <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" [class.bg-green-500]="ticket.status === 'open'" [class.bg-gray-400]="ticket.status === 'closed'"></span>
               <span class="flex-1 truncate group-hover:underline">{{ ticket.title }}</span>
-              <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
-                [ngClass]="ticket.type === 'issue' ? 'bg-info/15 text-info' : ticket.type === 'feat' ? 'bg-purple/15 text-purple' : 'bg-destructive/15 text-destructive'">
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 type-badge" [class]="getTypeBadgeClass(ticket.type)">
                 {{ ticket.type }}
               </span>
               <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
@@ -103,9 +102,27 @@ export class TicketListComponent implements OnInit {
   currentPage = 1;
   PAGE_SIZE = 25;
   totalCount = 0;
+  ticketTypes: WritableSignal<TicketTypeOption[]> = signal([]);
 
   ngOnInit(): void {
+    this.loadTicketTypes();
     this.loadTickets();
+  }
+
+  private loadTicketTypes(): void {
+    this.api.getTicketTypes().subscribe({
+      next: (types) => {
+        this.ticketTypes.set(types.map(type => ({
+          label: this.formatTypeLabel(type),
+          value: type,
+        })));
+      },
+      error: () => {},
+    });
+  }
+
+  private formatTypeLabel(type: string): string {
+    return type.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
   private loadTickets(): void {
@@ -172,6 +189,17 @@ export class TicketListComponent implements OnInit {
     this.currentPage = page;
     const offset = (page - 1) * this.PAGE_SIZE;
     this.filteredTickets = this.allTickets.slice(offset, offset + this.PAGE_SIZE);
+  }
+
+  /** Get CSS class for a type badge — use a color based on the type hash */
+  getTypeBadgeClass(type: string): string {
+    // Map types to consistent colors; unknown types get a neutral style
+    const typeColors: Record<string, string> = {
+      'issue': 'bg-info/15 text-info',
+      'feat': 'bg-purple/15 text-purple',
+      'bug': 'bg-destructive/15 text-destructive',
+    };
+    return typeColors[type] || 'bg-muted/15 text-muted-foreground';
   }
 
   formatDate(dateStr: string): string {

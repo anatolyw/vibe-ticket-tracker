@@ -109,6 +109,7 @@ vibe-tracker --help
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/tickets` | List tickets with filters |
+| GET | `/api/tickets/types` | List all configured ticket types |
 | GET | `/api/tickets/:id` | Get a single ticket |
 | POST | `/api/tickets` | Create a ticket |
 | PUT | `/api/tickets/:id` | Update a ticket |

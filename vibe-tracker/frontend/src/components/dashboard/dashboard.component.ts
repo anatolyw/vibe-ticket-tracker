@@ -1,7 +1,26 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, WritableSignal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { ApiService, TicketSummary } from '../../lib/api.service';
+import { ApiService, TicketSummary, TicketTypeOption } from '../../lib/api.service';
+
+/** Predefined color palette for type badges (cycles through available colors) */
+const TYPE_COLOR_CLASSES = [
+  'bg-info/15 text-info dark:bg-info/25 dark:text-info',    // blue-ish
+  'bg-purple/15 text-purple dark:bg-purple/25 dark:text-purple',  // purple
+  'bg-destructive/15 text-destructive dark:bg-destructive/25 dark:text-destructive', // red
+  'bg-success/15 text-success dark:bg-success/25 dark:text-success', // green
+  'bg-warning/15 text-warning dark:bg-warning/25 dark:text-warning', // amber
+  'bg-muted/15 text-muted-foreground dark:bg-muted/25 dark:text-muted-foreground', // gray
+];
+
+/** Get a consistent color class for a type by hashing its string */
+function getTypeColorClass(type: string): string {
+  let hash = 0;
+  for (let i = 0; i < type.length; i++) {
+    hash = ((hash << 5) - hash + type.charCodeAt(i)) | 0;
+  }
+  return TYPE_COLOR_CLASSES[Math.abs(hash) % TYPE_COLOR_CLASSES.length];
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -53,10 +72,10 @@ import { ApiService, TicketSummary } from '../../lib/api.service';
             <div class="flex items-center justify-between">
               <span class="text-sm font-medium text-muted-foreground">By Type</span>
             </div>
-            <div class="flex gap-2 mt-1 text-xs">
-              <span class="px-2 py-0.5 rounded-full bg-info/15 text-info dark:bg-info/25 dark:text-info">issue: {{ stats.issue || 0 }}</span>
-              <span class="px-2 py-0.5 rounded-full bg-purple/15 text-purple dark:bg-purple/25 dark:text-purple">feat: {{ stats.feat || 0 }}</span>
-              <span class="px-2 py-0.5 rounded-full bg-destructive/15 text-destructive dark:bg-destructive/25 dark:text-destructive">bug: {{ stats.bug || 0 }}</span>
+            <div class="flex gap-2 mt-1 text-xs flex-wrap">
+              @for (entry of typeStats(); track entry.type) {
+                <span class="px-2 py-0.5 rounded-full {{ entry.colorClass }}">{{ entry.type }}: {{ entry.count }}</span>
+              }
             </div>
           </div>
         }
@@ -84,7 +103,7 @@ import { ApiService, TicketSummary } from '../../lib/api.service';
                 <span class="w-2 h-2 rounded-full flex-shrink-0" [class.bg-green-500]="ticket.status === 'open'" [class.bg-muted-foreground]="ticket.status === 'closed'"></span>
                 <span class="flex-1 truncate text-sm">{{ ticket.title }}</span>
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
-                  [ngClass]="ticket.type === 'issue' ? 'bg-info/15 text-info' : ticket.type === 'feat' ? 'bg-purple/15 text-purple' : 'bg-destructive/15 text-destructive'">
+                  [class]="getTypeBadgeClass(ticket.type)">
                   {{ ticket.type }}
                 </span>
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
@@ -103,7 +122,8 @@ export class DashboardComponent implements OnInit {
   api = inject(ApiService);
   loading = true;
   tickets: TicketSummary[] = [];
-  stats = { total: 0, open: 0, closed: 0, issue: 0, feat: 0, bug: 0 };
+  stats = { total: 0, open: 0, closed: 0 };
+  typeStats = signal<Array<{ type: string; count: number; colorClass: string }>>([]);
 
   ngOnInit(): void { this.loadTickets(); }
 
@@ -115,12 +135,42 @@ export class DashboardComponent implements OnInit {
   }
 
   private updateStats(): void {
-    this.api.getTickets().subscribe({
+    this.api.getTickets({ limit: 9999 }).subscribe({
       next: (res) => {
         const all = res.tickets;
-        this.stats = { total: all.length, open: all.filter(t => t.status === 'open').length, closed: all.filter(t => t.status === 'closed').length, issue: all.filter(t => t.type === 'issue').length, feat: all.filter(t => t.type === 'feat').length, bug: all.filter(t => t.type === 'bug').length };
+        this.stats = { total: all.length, open: all.filter(t => t.status === 'open').length, closed: all.filter(t => t.status === 'closed').length };
+
+        // Count tickets per type
+        const typeMap = new Map<string, number>();
+        for (const t of all) {
+          typeMap.set(t.type, (typeMap.get(t.type) || 0) + 1);
+        }
+
+        // Get configured types and ensure ALL are shown (even with 0 count)
+        this.api.getTicketTypes().subscribe({
+          next: (configuredTypes) => {
+            this.typeStats.set(
+              configuredTypes.map(type => ({
+                type,
+                count: typeMap.get(type) || 0,
+                colorClass: getTypeColorClass(type),
+              }))
+            );
+          },
+          error: () => {
+            // Fallback: show only types that appear in ticket data
+            this.typeStats.set(
+              Array.from(typeMap.entries())
+                .map(([type, count]) => ({ type, count, colorClass: getTypeColorClass(type) }))
+            );
+          },
+        });
       },
       error: () => {},
     });
+  }
+
+  getTypeBadgeClass(type: string): string {
+    return getTypeColorClass(type);
   }
 }

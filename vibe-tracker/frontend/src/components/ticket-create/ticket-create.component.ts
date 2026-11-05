@@ -1,11 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
 import { LucideIconComponent } from '../../lib/lucide-icon.component';
 import { Router, RouterLink } from '@angular/router';
-import { ApiService, CreateTicketInput } from '../../lib/api.service';
+import { FormsModule } from '@angular/forms';
+import { ApiService, CreateTicketInput, TicketTypeOption } from '../../lib/api.service';
 
 @Component({
   selector: 'app-ticket-create',
-  imports: [RouterLink, LucideIconComponent],
+  imports: [RouterLink, LucideIconComponent, FormsModule],
   template: `
     <div class="max-w-2xl mx-auto space-y-6">
       <div class="flex items-center justify-between">
@@ -28,11 +29,11 @@ import { ApiService, CreateTicketInput } from '../../lib/api.service';
 
         <div>
           <label class="block text-sm font-medium mb-1.5">Type *</label>
-          <select [value]="type()" (change)="onTypeChange($event)"
+          <select (change)="onTypeChange($event)"
             class="w-full px-3 py-2 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-            <option value="issue">Issue - General task or request</option>
-            <option value="feat">Feat - New feature or enhancement</option>
-            <option value="bug">Bug - Fixing an existing bug</option>
+            @for (t of ticketTypes(); track t.value) {
+              <option [value]="t.value" [selected]="t.value === type()">{{ t.label }}</option>
+            }
           </select>
         </div>
 
@@ -44,7 +45,7 @@ import { ApiService, CreateTicketInput } from '../../lib/api.service';
         </div>
 
         <div class="flex gap-3 pt-2">
-          <button type="submit" [disabled]="submitting()"
+          <button type="submit" [disabled]="submitting() || type() === ''"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50">
             <lucide-icon name="Save" [size]="16"></lucide-icon>
             {{ submitting() ? 'Creating...' : 'Create Ticket' }}
@@ -66,16 +67,44 @@ import { ApiService, CreateTicketInput } from '../../lib/api.service';
     </div>
   `,
 })
-export class TicketCreateComponent {
+export class TicketCreateComponent implements OnInit {
   api = inject(ApiService);
   router = inject(Router);
 
   title = signal('');
-  type = signal('issue');
+  type = signal('');
   description = signal('');
   submitting = signal(false);
   error = signal('');
   success = signal(false);
+  ticketTypes: WritableSignal<TicketTypeOption[]> = signal([]);
+
+  ngOnInit(): void {
+    this.loadTicketTypes();
+  }
+
+  private loadTicketTypes(): void {
+    this.api.getTicketTypes().subscribe({
+      next: (types) => {
+        const options = types.map(type => ({
+          label: this.formatTypeLabel(type),
+          value: type,
+        }));
+        this.ticketTypes.set(options);
+        // Always default to first available type
+        if (options.length > 0) {
+          this.type.set(options[0].value);
+        }
+      },
+      error: () => {
+        this.error.set('Failed to load ticket types');
+      },
+    });
+  }
+
+  private formatTypeLabel(type: string): string {
+    return type.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
 
   onTitleInput(event: Event): void {
     this.title.set((event.target as HTMLInputElement).value);
@@ -93,6 +122,10 @@ export class TicketCreateComponent {
     this.error.set('');
     if (!this.title().trim()) {
       this.error.set('Title is required');
+      return;
+    }
+    if (!this.type()) {
+      this.error.set('Please select a type');
       return;
     }
 
