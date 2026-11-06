@@ -18,8 +18,6 @@ export interface TicketBody {
 
 export interface Ticket extends TicketFrontmatter {
   body: TicketBody;
-  filename: string;
-  filePath: string;
 }
 
 export interface TicketSummary {
@@ -29,7 +27,6 @@ export interface TicketSummary {
   status: 'open' | 'closed';
   created: string;
   updated: string;
-  filename: string;
 }
 
 export interface TicketsResponse {

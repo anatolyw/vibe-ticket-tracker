@@ -23,8 +23,6 @@ export interface TicketBody {
 
 export interface Ticket extends TicketFrontmatter {
   body: TicketBody;
-  filename: string;
-  filePath: string;
 }
 
 export interface TicketSummary {
@@ -34,7 +32,6 @@ export interface TicketSummary {
   status: 'open' | 'closed';
   created: string;
   updated: string;
-  filename: string;
 }
 
 function validateFrontmatter(frontmatter: Record<string, unknown>, typeOptions: string[]): string | null {
@@ -75,23 +72,24 @@ function generateTicketId(prefix: string, num: number): string {
   return `${prefix}-${numStr}`;
 }
 
-function parseTicketFile(filePath: string, config: VibeTrackerConfig): Ticket | null {
+function parseTicketFile(filePath: string, config: VibeTrackerConfig): [Ticket, string] | null {
   if (!existsSync(filePath)) return null;
   const content = readFileSync(filePath, 'utf-8');
   const parts = content.split(/^---\s*$/m);
   if (parts.length < 2) {
     // Try without frontmatter
-    return {
-      id: generateTicketId(config.VIBE_TRACKER_TICKET_PREFIX, 0),
-      title: basename(filePath, '.md'),
-      type: config.VIBE_TRACKER_TICKET_TYPE_OPTIONS[0],
-      status: 'open',
-      created: new Date().toISOString(),
-      updated: new Date().toISOString(),
-      body: { raw: content, html: marked.parse(content) as string },
-      filename: basename(filePath),
+    return [
+      {
+        id: generateTicketId(config.VIBE_TRACKER_TICKET_PREFIX, 0),
+        title: basename(filePath, '.md'),
+        type: config.VIBE_TRACKER_TICKET_TYPE_OPTIONS[0],
+        status: 'open',
+        created: new Date().toISOString(),
+        updated: new Date().toISOString(),
+        body: { raw: content, html: marked.parse(content) as string },
+      },
       filePath,
-    };
+    ];
   }
 
   try {
@@ -106,17 +104,18 @@ function parseTicketFile(filePath: string, config: VibeTrackerConfig): Ticket | 
     })();
     const autoId = `${config.VIBE_TRACKER_TICKET_PREFIX}-${String(parsedNum).padStart(5, '0')}`;
 
-    return {
-      id: frontmatter.id || autoId,
-      title: frontmatter.title || basename(filePath, '.md'),
-      type: frontmatter.type || config.VIBE_TRACKER_TICKET_TYPE_OPTIONS[0],
-      status: frontmatter.status || 'open',
-      created: frontmatter.created || new Date().toISOString(),
-      updated: frontmatter.updated || new Date().toISOString(),
-      body: { raw: bodyRaw, html },
-      filename: basename(filePath),
+    return [
+      {
+        id: frontmatter.id || autoId,
+        title: frontmatter.title || basename(filePath, '.md'),
+        type: frontmatter.type || config.VIBE_TRACKER_TICKET_TYPE_OPTIONS[0],
+        status: frontmatter.status || 'open',
+        created: frontmatter.created || new Date().toISOString(),
+        updated: frontmatter.updated || new Date().toISOString(),
+        body: { raw: bodyRaw, html },
+      },
       filePath,
-    };
+    ];
   } catch {
     return null;
   }
@@ -162,19 +161,21 @@ export function getTicket(config: VibeTrackerConfig, docRoot: string, ticketId: 
   const files = readdirSync(docRoot);
   for (const file of files) {
     if (file.startsWith(`${ticketId}-`)) {
-      return parseTicketFile(resolve(docRoot, file), config);
+      const result = parseTicketFile(resolve(docRoot, file), config);
+      return result ? result[0] : null;
     }
   }
   return null;
 }
 
 export function getAllTickets(config: VibeTrackerConfig, docRoot: string): Ticket[] {
+  if (!existsSync(docRoot)) return [];
   const files = readdirSync(docRoot);
   const tickets: Ticket[] = [];
   for (const file of files) {
     if (file.endsWith('.md') && file.startsWith(`${config.VIBE_TRACKER_TICKET_PREFIX}-`)) {
-      const ticket = parseTicketFile(resolve(docRoot, file), config);
-      if (ticket) tickets.push(ticket);
+      const result = parseTicketFile(resolve(docRoot, file), config);
+      if (result) tickets.push(result[0]);
     }
   }
   return tickets.sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime());
@@ -189,11 +190,10 @@ export function getTicketSummaries(config: VibeTrackerConfig, docRoot: string): 
     status: t.status,
     created: t.created,
     updated: t.updated,
-    filename: t.filename,
   }));
 }
 
-export function createTicket(config: VibeTrackerConfig, docRoot: string, title: string, type: string, description: string): Ticket | { error: string } {
+export function createTicket(config: VibeTrackerConfig, docRoot: string, title: string, type: string, description: string): Ticket | null | { error: string } {
   const normalizedType = normalizeTicketType(type);
   if (!config.VIBE_TRACKER_TICKET_TYPE_OPTIONS.includes(normalizedType)) {
     return { error: `Invalid type "${type}". Allowed: ${config.VIBE_TRACKER_TICKET_TYPE_OPTIONS.join(', ')}` };
@@ -230,12 +230,28 @@ export function createTicket(config: VibeTrackerConfig, docRoot: string, title: 
   const filePath = resolve(docRoot, finalFilename);
   writeFileSync(filePath, content, 'utf-8');
 
-  return parseTicketFile(filePath, config)!;
+  const result = parseTicketFile(filePath, config);
+  return result ? result[0] : null;
 }
 
-export function updateTicket(config: VibeTrackerConfig, docRoot: string, ticketId: string, updates: Partial<TicketFrontmatter & { body?: string }>): Ticket | { error: string } {
-  const existing = getTicket(config, docRoot, ticketId);
+export function updateTicket(config: VibeTrackerConfig, docRoot: string, ticketId: string, updates: Partial<TicketFrontmatter & { body?: string }>): Ticket | null | { error: string } {
+  // Find the ticket file and path
+  const files = readdirSync(docRoot);
+  let filePath: string | null = null;
+  let existing: Ticket | null = null;
+  for (const file of files) {
+    if (file.startsWith(`${ticketId}-`)) {
+      const resolvedPath = resolve(docRoot, file);
+      const result = parseTicketFile(resolvedPath, config);
+      if (result) {
+        existing = result[0];
+        filePath = result[1];
+        break;
+      }
+    }
+  }
   if (!existing) return { error: `Ticket "${ticketId}" not found` };
+  if (!filePath) return null;
 
   const updatedFm: Partial<TicketFrontmatter> = {
     id: existing.id,
@@ -252,18 +268,34 @@ export function updateTicket(config: VibeTrackerConfig, docRoot: string, ticketI
 
   const body = updates.body ?? existing.body.raw;
   const content = buildContent(updatedFm, body);
-  writeFileSync(existing.filePath, content, 'utf-8');
+  writeFileSync(filePath, content, 'utf-8');
 
-  return parseTicketFile(existing.filePath, config)!;
+  const result = parseTicketFile(filePath, config);
+  return result ? result[0] : null;
 }
 
 export function deleteTicket(config: VibeTrackerConfig, docRoot: string, ticketId: string): boolean {
-  const existing = getTicket(config, docRoot, ticketId);
-  if (!existing) return false;
-  try {
-    unlinkSync(existing.filePath);
-    return true;
-  } catch {
-    return false;
+  // Find the ticket file
+  const files = readdirSync(docRoot);
+  for (const file of files) {
+    if (file.startsWith(`${ticketId}-`)) {
+      try {
+        unlinkSync(resolve(docRoot, file));
+        return true;
+      } catch {
+        return false;
+      }
+    }
   }
+  return false;
+}
+
+export function findTicketFile(config: VibeTrackerConfig, docRoot: string, ticketId: string): string | null {
+  const files = readdirSync(docRoot);
+  for (const file of files) {
+    if (file.startsWith(`${ticketId}-`)) {
+      return resolve(docRoot, file);
+    }
+  }
+  return null;
 }

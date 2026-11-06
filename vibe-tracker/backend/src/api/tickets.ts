@@ -7,6 +7,7 @@ import {
   createTicket,
   updateTicket,
   deleteTicket,
+  findTicketFile,
   VibeTrackerConfig,
   TicketFrontmatter,
   getDocRoot,
@@ -87,14 +88,13 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
 
   // GET /api/tickets/:id/raw
   router.get('/:id/raw', (req: Request, res: Response) => {
-    const ticket = getTicket(config, docRoot, req.params.id as string);
-    if (!ticket) {
+    const filePath = findTicketFile(config, docRoot, req.params.id as string);
+    if (!filePath) {
       res.status(404).json({ error: `Ticket "${req.params.id}" not found` });
       return;
     }
+    const raw = readFileSync(filePath, 'utf-8');
     res.set('Content-Type', 'text/markdown');
-    // Re-read raw from file for consistency
-    const raw = readFileSync(ticket.filePath, 'utf-8');
     res.send(raw);
   });
 
@@ -133,6 +133,10 @@ export function createTicketRouter(config: VibeTrackerConfig, baseDir: string): 
     }
 
     const result = updateTicket(config, docRoot, req.params.id as string, updates);
+    if (result === null) {
+      res.status(500).json({ error: 'Failed to update ticket' });
+      return;
+    }
     if ('error' in result) {
       res.status(400).json({ error: result.error });
       return;

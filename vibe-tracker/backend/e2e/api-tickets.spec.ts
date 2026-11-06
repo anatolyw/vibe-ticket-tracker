@@ -14,7 +14,6 @@ test.describe('Backend E2E — REST API: Ticket Create', () => {
     expect(ticket.updated).toBeDefined();
     expect(ticket.body).toHaveProperty('raw');
     expect(ticket.body).toHaveProperty('html');
-    expect(ticket.filename).toMatch(/^issue-\d{5}-/);
   });
 
   test('POST /api/tickets creates a ticket with title and type only', async ({ request }) => {
@@ -288,7 +287,6 @@ test.describe('Backend E2E — REST API: Ticket Read', () => {test('GET /api/tic
     expect(summary).toHaveProperty('title');
     expect(summary).toHaveProperty('type');
     expect(summary).toHaveProperty('status');
-    expect(summary).toHaveProperty('filename');
   });
 });
 

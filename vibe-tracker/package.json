@@ -9,7 +9,7 @@
   },
   "files": [
     "LICENSE",
-    "README.md",
+    "./README.md",
     "backend/bin/vibe-ticket-tracker.cjs",
     "dist-server/",
     "dist-ui/",
@@ -52,7 +52,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.0",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.5.0",
     "jsonschema": "^1.4.1",
     "marked": "^14.1.0",
     "yaml": "^2.5.0"

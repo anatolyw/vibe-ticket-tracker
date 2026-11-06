@@ -56,17 +56,19 @@ test.describe('Backend E2E — Race Conditions: Duplicate Ticket Submission', ()
     }
   });
 
-  test('same title creates get suffixed filenames', async ({ request }) => {
-    const title = 'Duplicate title for filename test';
+  test('same title creates tickets with unique IDs', async ({ request }) => {
+    const title = 'Duplicate title for suffix test';
     const t1 = await createTicket(request, title);
     const t2 = await createTicket(request, title);
     try {
-      // Both should have filenames, possibly with suffix counter
-      expect(t1.filename).toBeDefined();
-      expect(t2.filename).toBeDefined();
-      expect(t1.filename).not.toBe(t2.filename);
-      expect((t1.filename as string).endsWith('.md')).toBeTruthy();
-      expect((t2.filename as string).endsWith('.md')).toBeTruthy();
+      // Both should have distinct IDs
+      expect(t1.id).not.toBe(t2.id);
+      expect(t1.title).toBe(title);
+      expect(t2.title).toBe(title);
+      // The second ticket should have a higher number
+      const num1 = parseInt((t1.id as string).split('-')[1]);
+      const num2 = parseInt((t2.id as string).split('-')[1]);
+      expect(num2).toBeGreaterThan(num1);
     } finally {
       await request.delete(`http://localhost:61001/api/tickets/${t1.id}`);
       await request.delete(`http://localhost:61001/api/tickets/${t2.id}`);

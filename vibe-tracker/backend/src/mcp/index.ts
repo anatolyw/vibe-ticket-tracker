@@ -219,6 +219,7 @@ export function createMCPEndpoint(config: VibeTrackerConfig, baseDir: string): R
             const description = args?.description as string || '';
             if (!title) throw new Error('title is required');
             const ticket = createTicket(config, docRoot, title, type, description);
+            if (ticket === null) throw new Error('Failed to create ticket');
             if ('error' in ticket) throw new Error(ticket.error);
             response.result = ticket;
             break;
@@ -233,6 +234,7 @@ export function createMCPEndpoint(config: VibeTrackerConfig, baseDir: string): R
             if (!ticketId) throw new Error('ticket_id is required');
             if (Object.keys(updates).length === 0) throw new Error('No fields to update');
             const ticket = updateTicket(config, docRoot, ticketId, updates);
+            if (ticket === null) throw new Error('Failed to update ticket');
             if ('error' in ticket) throw new Error(ticket.error);
             response.result = ticket;
             break;

@@ -43,7 +43,6 @@ prerendered-routes.json
 
 # Backend sub-project
 backend/
-!backend/bin/
 !backend/bin/vibe-ticket-tracker.cjs
 
 # Frontend sub-project
