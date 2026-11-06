@@ -10,7 +10,7 @@ updated: 2026-11-02
 
 ## Overview
 
-Prepared the Vibe Tracker project for publishing to www.npmjs.com. Adjusted code to version 1.0.0. Build artifacts are generated at publish time via `prepack`/`prepublishOnly` — nothing is committed to git.
+Prepared the Vibe Ticket Tracker project for publishing to www.npmjs.com. Adjusted code to version 1.0.0. Build artifacts are generated at publish time via `prepack`/`prepublishOnly` — nothing is committed to git.
 
 ## Files Created
 
@@ -35,7 +35,7 @@ Prepared the Vibe Tracker project for publishing to www.npmjs.com. Adjusted code
   - Added `prepublishOnly` — same as `prepack`
   - `clean` — removes all build output from root + backend + frontend
 - **Added fields**:
-  - `repository` — points to `git+https://github.com/anatolyw/vibe-tracker.git`
+  - `repository` — points to `git+https://github.com/anatolyw/vibe-ticket-tracker.git`
   - `keywords` — ticketing, tracking, cli, mcp, vibe-coding, opencode, agent, task-management, local-first
   - `author` — Anatoly Weinstein (https://github.com/anatolyw)
   - `license` — MIT
@@ -50,9 +50,9 @@ Prepared the Vibe Tracker project for publishing to www.npmjs.com. Adjusted code
 - Added MCP endpoints documentation
 - Added project structure section
 - Added license notice
-- Updated references from `AGENTS.md` to `VIBE-TRACKER-AGENTS.md`
+- Updated references from `AGENTS.md` to `VIBE-TICKET-TRACKER-AGENTS.md`
 
-### `backend/bin/vibe-tracker.cjs`
+### `backend/bin/vibe-ticket-tracker.cjs`
 - Updated spawn path from `../dist/cli.js` to `../../dist-server/cli.js`
 
 ### `backend/dist/cli.js` (compiled)
@@ -60,8 +60,8 @@ Prepared the Vibe Tracker project for publishing to www.npmjs.com. Adjusted code
 - Added `dist-ui/` as first candidate in `generateUIDistPath()` function (for published package path)
 - Path resolution: `dirname(dirname(cliPath))` — only 2 levels up (was 3)
 - Template path: `dirname(cliPath)` — only 1 level up (was 2)
-- AGENTS.md references updated to `VIBE-TRACKER-AGENTS.md`
-- Init summary updated to `npx vibe-tracker start` (no `vibe:open` line)
+- AGENTS.md references updated to `VIBE-TICKET-TRACKER-AGENTS.md`
+- Init summary updated to `npx vibe-ticket-tracker start` (no `vibe:open` line)
 
 ### `backend/src/cli.ts` (source)
 - Same source-level updates as compiled `cli.js`
@@ -77,7 +77,7 @@ Prepared the Vibe Tracker project for publishing to www.npmjs.com. Adjusted code
 - **Dynamic version**: Added `getVersion()` function that reads `window.VIBE_TRACKER_VERSION` (set at build time) or falls back to `window.VIBE_TRACKER_DEV_SHA` for dev builds.
 - Footer now uses `{{ version() }}` instead of hardcoded `v0.1.0`.
 
-### `VIBE-TRACKER-SKILL-TEMPLATE.md`
+### `VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md`
 - Version metadata updated from `'1.0'` to `'1.0.0'`
 
 ### `.gitignore`
@@ -90,9 +90,9 @@ These are the files that end up in the published npm tarball:
 ```
 LICENSE
 README.md
-VIBE-TRACKER-AGENTS-TEMPLATE.md
-VIBE-TRACKER-SKILL-TEMPLATE.md
-backend/bin/vibe-tracker.cjs
+VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md
+VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md
+backend/bin/vibe-ticket-tracker.cjs
 dist-server/api/tickets.d.ts
 dist-server/api/tickets.js
 dist-server/cli.d.ts
@@ -194,8 +194,8 @@ The version is injected into `dist-ui/index.html` during the build step by `inje
 
 ## What Users Install
 
-When users run `npm install vibe-tracker`, they receive:
-- A `vibe-tracker` CLI command (via `bin` field)
+When users run `npm install vibe-ticket-tracker`, they receive:
+- A `vibe-ticket-tracker` CLI command (via `bin` field)
 - The compiled Express server
 - The built Angular UI
 - No source code, no `node_modules`, no build tools
@@ -215,8 +215,8 @@ npm pack
 # Test locally from the tarball
 mkdir /tmp/test-vt && cd /tmp/test-vt
 npm init -y
-npm install /workspace/vibe-tracker/vibe-tracker-1.0.0.tgz
-npx vibe-tracker --help
+npm install /workspace/vibe-tracker/vibe-ticket-tracker-1.0.0.tgz
+npx vibe-ticket-tracker --help
 
 # Clean everything
 npm run clean

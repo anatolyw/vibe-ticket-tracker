@@ -1,24 +1,24 @@
 ---
 id: issue-0006
-title: Interactive vibe-tracker init dialog with JSONC support
+title: Interactive vibe-ticket-tracker init dialog with JSONC support
 type: feat
 status: open
 created: 2026-10-30
 updated: 2026-10-30
 ---
 
-# Interactive Vibe Tracker Init Dialog
+# Interactive Vibe Ticket Tracker Init Dialog
 
 ## Summary
 
-Enhance `vibe-tracker init` to walk users through an interactive dialog that generates properly configured files: `vibe-tracker.jsonc`, optional `opencode.jsonc`, agent skill, and AGENTS.md template integration. Consolidate duplicate CLI implementations into a single source.
+Enhance `vibe-ticket-tracker init` to walk users through an interactive dialog that generates properly configured files: `vibe-ticket-tracker.jsonc`, optional `opencode.jsonc`, agent skill, and AGENTS.md template integration. Consolidate duplicate CLI implementations into a single source.
 
 ## Problem
 
-- `vibe-tracker init` currently writes a plain `vibe-tracker.json` with no interactivity
+- `vibe-ticket-tracker init` currently writes a plain `vibe-ticket-tracker.json` with no interactivity
 - `VIBE_TRACKER_PORT` can drift between config files (e.g., example project has 61001, MCP points to 61000)
 - No support for JSONC format (comments in config are useful for reminding about cross-file sync)
-- Duplicate CLI code in `vibe-tracker.cjs` and `vibe-tracker.ts`
+- Duplicate CLI code in `vibe-ticket-tracker.cjs` and `vibe-ticket-tracker.ts`
 - Skill and AGENTS.md are manual, error-prone setup steps
 
 ## Solution
@@ -32,11 +32,11 @@ Replace the `init` command with an interactive prompt-based wizard. Consolidate 
 | File | Action | Description |
 |------|--------|-------------|
 | `backend/src/cli.ts` | **NEW** | Consolidated CLI entry point (init + start commands) |
-| `backend/bin/vibe-tracker.cjs` | **MODIFY** | Thin wrapper (5 lines) delegating to compiled CLI |
-| `backend/bin/vibe-tracker.ts` | **DELETE** | Duplicate Commander version, never the actual entry point |
+| `backend/bin/vibe-ticket-tracker.cjs` | **MODIFY** | Thin wrapper (5 lines) delegating to compiled CLI |
+| `backend/bin/vibe-ticket-tracker.ts` | **DELETE** | Duplicate Commander version, never the actual entry point |
 | `backend/src/storage/config.ts` | **MODIFY** | Support `.jsonc` format, JSONC parsing |
-| `VIBE-TRACKER-SKILL-TEMPLATE.md` | **NEW** | Skill template (moved from example project) |
-| `VIBE-TRACKER-AGENTS-TEMPLATE.md` | **NEW** | VIBE-TRACKER-AGENTS.md template for projects |
+| `VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md` | **NEW** | Skill template (moved from example project) |
+| `VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md` | **NEW** | VIBE-TICKET-TRACKER-AGENTS.md template for projects |
 
 ---
 
@@ -46,14 +46,14 @@ All prompts use ANSI colors: cyan for questions, green for success, yellow for w
 
 ### Step 1: Port Configuration
 
-1. Prompt: **"What port should the Vibe Tracker server use? (61000-62000)"**
+1. Prompt: **"What port should the Vibe Ticket Tracker server use? (61000-62000)"**
    - Default: `61000`
    - Validate: numeric, in range 61000–62000, reject invalid input
-2. If `vibe-tracker.json` (or `.jsonc`) already exists:
+2. If `vibe-ticket-tracker.json` (or `.jsonc`) already exists:
    - Ask: **"Existing config found. Overwrite? (y/N)"**
-   - **Yes** → rename old file to `vibe-tracker.jsonc.bak` (or `.json.bak`), write new `vibe-tracker.jsonc`
+   - **Yes** → rename old file to `vibe-ticket-tracker.jsonc.bak` (or `.json.bak`), write new `vibe-ticket-tracker.jsonc`
    - **No** → print JSONC content to console with prefix `Overwrite manually:`
-3. Write `vibe-tracker.jsonc` with inline comment on the port line:
+3. Write `vibe-ticket-tracker.jsonc` with inline comment on the port line:
    ```jsonc
    {
      "VIBE_TRACKER_PORT": 61000, // WARNING: If you change this port, update your MCP server configuration (e.g., opencode.jsonc) to match
@@ -71,13 +71,13 @@ All prompts use ANSI colors: cyan for questions, green for success, yellow for w
 2. If **yes**:
    - If `opencode.jsonc` already exists:
      - Ask: **"Existing opencode.jsonc found. Update MCP entry? (y/N)"**
-     - **Yes** → merge new `vibe-tracker` MCP entry into existing file (preserve other entries)
+     - **Yes** → merge new `vibe-ticket-tracker` MCP entry into existing file (preserve other entries)
      - **No** → print proposed `opencode.jsonc` content to console with `Save manually:` instruction
    - If not exists → create new file with:
      ```json
      {
        "mcpServers": {
-         "vibe-tracker": {
+         "vibe-ticket-tracker": {
            "command": "http",
            "args": ["http://localhost:61000/mcp"],
            "headers": {
@@ -91,25 +91,25 @@ All prompts use ANSI colors: cyan for questions, green for success, yellow for w
 
 ### Step 3: Agent Skill File
 
-1. Prompt: **"Where should the Vibe Tracker skill file be placed?"**
-   - Default: `.opencode/skills/vibe-tracker.md`
+1. Prompt: **"Where should the Vibe Ticket Tracker skill file be placed?"**
+   - Default: `.opencode/skills/vibe-ticket-tracker.md`
    - Accept custom path input
 2. If file already exists at chosen path:
    - Ask: **"File exists. Overwrite? (y/N)"**
    - **Yes** → overwrite
    - **No** → print template content to console with `Save manually:` instruction
-3. Copy content from `VIBE-TRACKER-SKILL-TEMPLATE.md`
+3. Copy content from `VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md`
 
-### Step 4: VIBE-TRACKER-AGENTS.md Integration
+### Step 4: VIBE-TICKET-TRACKER-AGENTS.md Integration
 
-1. If `VIBE-TRACKER-AGENTS.md` does **not** exist:
-   - Ask: **"Create VIBE-TRACKER-AGENTS.md with Vibe Tracker workflow? (y/N)"**
-   - **Yes** → generate from `VIBE-TRACKER-AGENTS-TEMPLATE.md`
+1. If `VIBE-TICKET-TRACKER-AGENTS.md` does **not** exist:
+   - Ask: **"Create VIBE-TICKET-TRACKER-AGENTS.md with Vibe Ticket Tracker workflow? (y/N)"**
+   - **Yes** → generate from `VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md`
    - **No** → skip
-2. If `VIBE-TRACKER-AGENTS.md` **exists**:
+2. If `VIBE-TICKET-TRACKER-AGENTS.md` **exists**:
    - Print template snippet to console:
      ```
-     VIBE-TRACKER-AGENTS.md already exists. Add this section to it:
+     VIBE-TICKET-TRACKER-AGENTS.md already exists. Add this section to it:
 
      --- template content ---
      ```
@@ -127,7 +127,7 @@ Print next steps, similar to the current output:
 
 ## JSONC Parsing
 
-The server must parse `vibe-tracker.jsonc` (strip comments, handle trailing commas).
+The server must parse `vibe-ticket-tracker.jsonc` (strip comments, handle trailing commas).
 
 ### `parseJSONC()` implementation
 
@@ -156,7 +156,7 @@ function parseJSONC(text: string): unknown {
 
 ### `config.ts` changes
 
-- `findConfigFile()`: check for `vibe-tracker.jsonc` **before** `vibe-tracker.json`
+- `findConfigFile()`: check for `vibe-ticket-tracker.jsonc` **before** `vibe-ticket-tracker.json`
 - `loadConfig()`: use `parseJSONC()` instead of `JSON.parse()`
 - Export `parseJSONC()` for reuse
 
@@ -186,13 +186,13 @@ function color(color: string, text: string): string {
 ## Implementation Order
 
 1. **JSONC support** — add `parseJSONC()` to `config.ts`, update `findConfigFile()` and `loadConfig()`
-2. **Create templates** — copy/move `VIBE-TRACKER-SKILL-TEMPLATE.md` and create `VIBE-TRACKER-AGENTS-TEMPLATE.md`
+2. **Create templates** — copy/move `VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md` and create `VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md`
 3. **Write consolidated CLI** — new `backend/src/cli.ts` with all init + start logic
-4. **Thin wrapper** — update `vibe-tracker.cjs` to 5-line wrapper
-5. **Delete duplicate** — remove `vibe-tracker.ts`
+4. **Thin wrapper** — update `vibe-ticket-tracker.cjs` to 5-line wrapper
+5. **Delete duplicate** — remove `vibe-ticket-tracker.ts`
 6. **Update build** — ensure `cli.ts` is compiled alongside `src/`
-7. **Test** — run `vibe-tracker init` in a fresh directory, verify all files
-8. **Documentation** - update documentation entries which ask to call `vibe-tracker init` with detailed instructions
+7. **Test** — run `vibe-ticket-tracker init` in a fresh directory, verify all files
+8. **Documentation** - update documentation entries which ask to call `vibe-ticket-tracker init` with detailed instructions
 
 ---
 
@@ -209,21 +209,21 @@ function color(color: string, text: string): string {
 
 ### What Was Built
 
-**Interactive `vibe-tracker init` wizard** that walks users through 5 steps:
+**Interactive `vibe-ticket-tracker init` wizard** that walks users through 5 steps:
 
-1. **Port configuration** — validates 61000–62000, defaults to 61000, generates `vibe-tracker.jsonc` with inline comment warning about MCP config sync
+1. **Port configuration** — validates 61000–62000, defaults to 61000, generates `vibe-ticket-tracker.jsonc` with inline comment warning about MCP config sync
 2. **Optional MCP config** — generates or merges `opencode.jsonc`, preserving other server entries
-3. **Skill file** — copies `VIBE-TRACKER-SKILL-TEMPLATE.md` to user-specified path (default: `.opencode/skills/vibe-tracker.md`)
+3. **Skill file** — copies `VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md` to user-specified path (default: `.opencode/skills/vibe-ticket-tracker.md`)
 4. **AGENTS.md** — creates from template if missing, prints template for manual addition if file exists
 5. **Summary** — prints next steps and file locations
 
-**JSONC support** — server (`config.ts`) parses `vibe-tracker.jsonc` with `//` comments and trailing commas, prefers `.jsonc` over `.json`
+**JSONC support** — server (`config.ts`) parses `vibe-ticket-tracker.jsonc` with `//` comments and trailing commas, prefers `.jsonc` over `.json`
 
-**Consolidated CLI** — single `backend/src/cli.ts` handles both `init` and `start` commands. The old `vibe-tracker.cjs` is now a 5-line wrapper, and the duplicate `vibe-tracker.ts` was deleted
+**Consolidated CLI** — single `backend/src/cli.ts` handles both `init` and `start` commands. The old `vibe-ticket-tracker.cjs` is now a 5-line wrapper, and the duplicate `vibe-ticket-tracker.ts` was deleted
 
 **Two new templates** shipped with the package:
-- `VIBE-TRACKER-SKILL-TEMPLATE.md` — agent rules for how to use the tracker
-- `VIBE-TRACKER-AGENTS-TEMPLATE.md` — VIBE-TRACKER-AGENTS.md workflow template with `{PORT}` placeholder
+- `VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md` — agent rules for how to use the tracker
+- `VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md` — VIBE-TICKET-TRACKER-AGENTS.md workflow template with `{PORT}` placeholder
 
 **Color-coded prompts** using ANSI escape codes (cyan questions, green success, yellow warnings, bold file paths) — zero external dependencies
 

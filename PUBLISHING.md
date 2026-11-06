@@ -1,4 +1,4 @@
-# Vibe Tracker — npm Publishing Tutorial
+# Vibe Ticket Tracker — npm Publishing Tutorial
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ cd /workspace/vibe-tracker
 npm publish --dry-run
 
 # Check existing package info
-npm view vibe-tracker --json 2>/dev/null || echo "Not yet published (expected)"
+npm view vibe-ticket-tracker --json 2>/dev/null || echo "Not yet published (expected)"
 ```
 
 You should see the build output followed by multiple files in the tarball including `dist-server/`, `dist-ui/`, `backend/bin/`, and all documentation files.
@@ -78,27 +78,27 @@ npm publish
 npm publish --access public
 ```
 
-The package will be available at: `https://www.npmjs.com/package/vibe-tracker`
+The package will be available at: `https://www.npmjs.com/package/vibe-ticket-tracker`
 
 ## Step 6: Verify Publication
 
 ```bash
 # Check the package info
-npm view vibe-tracker
+npm view vibe-ticket-tracker
 
 # Test installation in a fresh directory
 mkdir /tmp/vibe-tracker-example-project && cd /tmp/vibe-tracker-example-project
 npm init -y
-npm install vibe-tracker
+npm install vibe-ticket-tracker
 
 # Verify the CLI works
-npx vibe-tracker --help
+npx vibe-ticket-tracker --help
 
 # Initialize in a test project
-npx vibe-tracker init
+npx vibe-ticket-tracker init
 
 # Start the server
-npx vibe-tracker start
+npx vibe-ticket-tracker start
 ```
 
 ## Step 7: Subsequent Releases
@@ -117,7 +117,7 @@ npm publish
 
 ## Important Notes
 
-1. **Package name uniqueness**: If `vibe-tracker` is already taken, use a scoped name like `@anatolyw/vibe-tracker` by changing the `name` field in `package.json` to `"@anatolyw/vibe-tracker"`.
+1. **Package name uniqueness**: If `vibe-ticket-tracker` is already taken, use a scoped name like `@anatolyw/vibe-ticket-tracker` by changing the `name` field in `package.json` to `"@anatolyw/vibe-ticket-tracker"`.
 
 2. **Scoped packages** require `--access public` on first publish:
    ```bash
@@ -126,8 +126,8 @@ npm publish
 
 3. **Version constraints**: The package requires `node >= 18.0.0` (specified in `engines`).
 
-4. **What users install**: When users run `npm install vibe-tracker`, they get:
-   - A `vibe-tracker` CLI command (via `bin`)
+4. **What users install**: When users run `npm install vibe-ticket-tracker`, they get:
+   - A `vibe-ticket-tracker` CLI command (via `bin`)
    - The compiled Express server
    - The built Angular UI
    - No source code, no `node_modules`, no build tools
@@ -154,22 +154,22 @@ npm install && cd frontend && npm install && cd ../backend && npm install && cd 
 
 # Create the tarball (prepack runs automatically, copying pre-built output)
 npm pack
-# → Produces vibe-tracker-1.0.0.tgz
+# → Produces vibe-ticket-tracker-1.0.0.tgz
 
 # Install from the tarball into a test directory
 mkdir /tmp/vibe-tracker-example-project && cd /tmp/vibe-tracker-example-project
 npm init -y
-npm uninstall vibe-tracker 2>/dev/null # clear cache
-npm install /workspace/vibe-tracker/vibe-tracker-1.0.0.tgz
+npm uninstall vibe-ticket-tracker 2>/dev/null # clear cache
+npm install /workspace/vibe-tracker/vibe-ticket-tracker-1.0.0.tgz
 
 # Verify the CLI works
-npx vibe-tracker --help
+npx vibe-ticket-tracker --help
 
 # Initialize in the test project
-npx vibe-tracker init
+npx vibe-ticket-tracker init --port 61000
 
 # Start the server
-npx vibe-tracker start
+npx vibe-ticket-tracker start
 ```
 
 ### Lifecycle Scripts Reference

@@ -7,7 +7,7 @@ created: 2026-10-30T19:00:15.757Z
 updated: 2026-10-30T19:01:30.009Z
 ---
 ## Description
-Update the Vibe Tracker skill documentation to add anti-duplicate and MCP reliability rules.
+Update the Vibe Ticket Tracker skill documentation to add anti-duplicate and MCP reliability rules.
 
 ## Problem
 When vibe_tracker_create_ticket fails silently (returns null or times out), the agent may retry and create duplicate tickets. Issue-00006 was left open as a ghost ticket.
@@ -21,7 +21,7 @@ Add explicit rules to both the skill file and AGENTS.md:
 4. Deduplicate by title - Search for similar titles before creating.
 
 ## Files modified:
-- .opencode/skills/vibe-tracker.md - Added sections 11-13 (Duplicate Prevention, MCP Reliability, Verify After Create)
+- .opencode/skills/vibe-ticket-tracker.md - Added sections 11-13 (Duplicate Prevention, MCP Reliability, Verify After Create)
 - AGENTS.md - Added Duplicate Prevention & MCP Reliability section with MUST rules
 
 ## Acceptance criteria:
@@ -40,7 +40,7 @@ Add explicit rules to both the skill file and AGENTS.md:
 
 ## Changes
 ### Files modified
-- .opencode/skills/vibe-tracker.md (added sections 11-13)
+- .opencode/skills/vibe-ticket-tracker.md (added sections 11-13)
 - AGENTS.md (added Duplicate Prevention & MCP Reliability section)
 
 ### Code changes summary

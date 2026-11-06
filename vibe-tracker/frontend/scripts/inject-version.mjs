@@ -25,7 +25,7 @@ if (!existsSync(indexHtmlPath)) {
 
 // ── Determine version ──────────────────────────────────────────────────
 
-// Read from vibe-tracker root package.json
+// Read from vibe-ticket-tracker root package.json
 const rootPkgPath = resolve(__dirname, '..', '..', 'package.json');
 let version = '';
 if (existsSync(rootPkgPath)) {
@@ -50,12 +50,12 @@ const versionStr = isRelease ? `v${version}` : `dev (${devSha})`;
 const indexHtml = readFileSync(indexHtmlPath, 'utf-8');
 
 // Skip if already injected (idempotent)
-if (indexHtml.includes('id="vibe-tracker-version"')) {
+if (indexHtml.includes('id="vibe-ticket-tracker-version"')) {
   console.log('Version already injected, skipping.');
   process.exit(0);
 }
 
-const injectScript = `<script id="vibe-tracker-version" type="text/javascript">
+const injectScript = `<script id="vibe-ticket-tracker-version" type="text/javascript">
   window.VIBE_TRACKER_VERSION = ${isRelease ? `"${versionStr}"` : 'undefined'};
   window.VIBE_TRACKER_DEV_SHA = ${devSha ? `"${devSha}"` : 'undefined'};
 </script>`;

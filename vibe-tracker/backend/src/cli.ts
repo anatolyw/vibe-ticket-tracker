@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Consolidated CLI entry point for vibe-tracker.
+ * Consolidated CLI entry point for vibe-ticket-tracker.
  * Handles `init` (interactive wizard) and `start` commands.
  */
 
@@ -105,7 +105,7 @@ function generateOpencodeConfig(port: number, skillPath: string): string {
       $schema: 'https://opencode.ai/config.json',
       mcp: {
         servers: {
-          'vibe-tracker': {
+          'vibe-ticket-tracker': {
             type: 'remote',
             url: `http://localhost:${port}/mcp`,
             oauth: false,
@@ -113,7 +113,7 @@ function generateOpencodeConfig(port: number, skillPath: string): string {
         },
       },
       instructions: [
-        './VIBE-TRACKER-AGENTS.md',
+        './VIBE-TICKET-TRACKER-AGENTS.md',
         skillRel,
       ],
     },
@@ -125,9 +125,9 @@ function generateOpencodeConfig(port: number, skillPath: string): string {
 function mergeOpencode(existing: string, port: number, skillPath: string): string {
   try {
     const parsed: Record<string, unknown> = JSON.parse(existing);
-    const agentsPath = './VIBE-TRACKER-AGENTS.md';
+    const agentsPath = './VIBE-TICKET-TRACKER-AGENTS.md';
 
-    // Handle instructions array — add ./VIBE-TRACKER-AGENTS.md and skill path if not present
+    // Handle instructions array — add ./VIBE-TICKET-TRACKER-AGENTS.md and skill path if not present
     if (Array.isArray(parsed.instructions)) {
       const instructions = parsed.instructions as string[];
       // Remove old references
@@ -147,7 +147,7 @@ function mergeOpencode(existing: string, port: number, skillPath: string): strin
       if (!mcp.servers || typeof mcp.servers !== 'object' || Array.isArray(mcp.servers)) {
         mcp.servers = {};
       }
-      (mcp.servers as Record<string, unknown>)['vibe-tracker'] = {
+      (mcp.servers as Record<string, unknown>)['vibe-ticket-tracker'] = {
         type: 'remote',
         url: `http://localhost:${port}/mcp`,
         oauth: false,
@@ -156,7 +156,7 @@ function mergeOpencode(existing: string, port: number, skillPath: string): strin
       // V1 or no mcp key — convert to V2
       parsed.mcp = {
         servers: {
-          'vibe-tracker': {
+          'vibe-ticket-tracker': {
             type: 'remote',
             url: `http://localhost:${port}/mcp`,
             oauth: false,
@@ -175,9 +175,9 @@ function mergeOpencode(existing: string, port: number, skillPath: string): strin
 // ── UI helpers ───────────────────────────────────────────────────────
 
 function generateUIDistPath(): string {
-  // Find UI dist relative to vibe-tracker package root
+  // Find UI dist relative to vibe-ticket-tracker package root
   const cliPath = resolve(__cliDir, 'cli.js');
-  const pkgRoot = dirname(dirname(cliPath)); // dist-server/ -> package root (e.g., node_modules/vibe-tracker/)
+  const pkgRoot = dirname(dirname(cliPath)); // dist-server/ -> package root (e.g., node_modules/vibe-ticket-tracker/)
   const candidates = [
     resolve(pkgRoot, 'dist-ui'),
     resolve(pkgRoot, 'frontend', 'dist', 'ui', 'browser'),
@@ -220,8 +220,8 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
   }
 
   // Check for existing config
-  const jsoncPath = resolve(base, 'vibe-tracker.jsonc');
-  const jsonPath = resolve(base, 'vibe-tracker.json');
+  const jsoncPath = resolve(base, 'vibe-ticket-tracker.jsonc');
+  const jsonPath = resolve(base, 'vibe-ticket-tracker.json');
   let existingConfig: string | null = null;
   let existingPath = '';
   if (existsSync(jsonPath)) {
@@ -262,7 +262,7 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
   console.log(success(`Ticket directory → ${docRoot}`));
 
   // ── Step 2: Skill path (needed for MCP config instructions) ─────────
-  const skillDefault = '.opencode/skills/vibe-tracker.md';
+  const skillDefault = '.opencode/skills/vibe-ticket-tracker.md';
   const skillInput = await ask('Where should the Vibe Tracker skill file be placed? (default: ' + skillDefault + ')');
   const skillPath = skillInput ? resolve(base, skillInput) : resolve(base, skillDefault);
 
@@ -295,7 +295,7 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
     }
 
     // Write skill file (it's referenced in the MCP config instructions)
-    const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
+    const template = readTemplate('VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md');
     writeJSONC(skillPath, template);
     console.log(success(`Skill written → ${skillPath}`));
     skillGenerated = true;
@@ -310,50 +310,50 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
     if (existsSync(skillPath)) {
       const overwriteSkill = await askYesNo('Skill file at \'' + skillPath + '\' already exists. Overwrite?');
       if (overwriteSkill) {
-        const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
+        const template = readTemplate('VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md');
         writeJSONC(skillPath, template);
         console.log(success(`Skill written → ${skillPath}`));
         skillGenerated = true;
       } else {
         console.log('\n' + c(C.yellow, 'Save manually:'));
-        const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
+        const template = readTemplate('VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md');
         console.log(template);
       }
     } else {
-      const template = readTemplate('VIBE-TRACKER-SKILL-TEMPLATE.md');
+      const template = readTemplate('VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md');
       writeJSONC(skillPath, template);
       console.log(success(`Skill written → ${skillPath}`));
       skillGenerated = true;
     }
   }
 
-  // ── Step 4: VIBE-TRACKER-AGENTS.md ──────────────────────────────────
-  const agentsPath = resolve(base, 'VIBE-TRACKER-AGENTS.md');
+  // ── Step 4: VIBE-TICKET-TRACKER-AGENTS.md ──────────────────────────────────
+  const agentsPath = resolve(base, 'VIBE-TICKET-TRACKER-AGENTS.md');
   let agentsGenerated = false;
 
   if (existsSync(agentsPath)) {
-    const overwriteAgents = await askYesNo('VIBE-TRACKER-AGENTS.md at \'' + agentsPath + '\' already exists. Overwrite?');
+    const overwriteAgents = await askYesNo('VIBE-TICKET-TRACKER-AGENTS.md at \'' + agentsPath + '\' already exists. Overwrite?');
     if (overwriteAgents) {
       const bak = agentsPath + '.bak';
       renameSync(agentsPath, bak);
       console.log(success(`Backed up → ${bak}`));
-      const template = readTemplate('VIBE-TRACKER-AGENTS-TEMPLATE.md');
+      const template = readTemplate('VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md');
       const withPort = template.replace(/{PORT}/g, String(port));
       writeFileSync(agentsPath, withPort, 'utf-8');
-      console.log(success(`VIBE-TRACKER-AGENTS.md written → ${agentsPath}`));
+      console.log(success(`VIBE-TICKET-TRACKER-AGENTS.md written → ${agentsPath}`));
       agentsGenerated = true;
     } else {
       console.log('\n' + c(C.yellow, 'Save manually:'));
-      const template = readTemplate('VIBE-TRACKER-AGENTS-TEMPLATE.md');
+      const template = readTemplate('VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md');
       console.log(template.replace(/{PORT}/g, String(port)));
     }
   } else {
-    const createAgents = await askYesNo('Create VIBE-TRACKER-AGENTS.md with Vibe Tracker workflow?');
+    const createAgents = await askYesNo('Create VIBE-TICKET-TRACKER-AGENTS.md with Vibe Tracker workflow?');
     if (createAgents) {
-      const template = readTemplate('VIBE-TRACKER-AGENTS-TEMPLATE.md');
+      const template = readTemplate('VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md');
       const withPort = template.replace(/{PORT}/g, String(port));
       writeFileSync(agentsPath, withPort, 'utf-8');
-      console.log(success(`VIBE-TRACKER-AGENTS.md written → ${agentsPath}`));
+      console.log(success(`VIBE-TICKET-TRACKER-AGENTS.md written → ${agentsPath}`));
       agentsGenerated = true;
     }
   }
@@ -361,11 +361,11 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
   // ── Step 5: Summary ───────────────────────────────────────────
   console.log('\n' + c(C.bold, '═══ Setup Complete ═══\n'));
   console.log(c(C.bold, 'Next steps:'));
-  console.log(`  ${c(C.green, 'npx vibe-tracker start')}    — Start the server`);
+  console.log(`  ${c(C.green, 'npx vibe-ticket-tracker start')}    — Start the server`);
   console.log(`  Open in browser http://localhost:${port}`);
 
   if (agentsGenerated) {
-    console.log(`  Agent file → ${c(C.bold, 'VIBE-TRACKER-AGENTS.md')}`);
+    console.log(`  Agent file → ${c(C.bold, 'VIBE-TICKET-TRACKER-AGENTS.md')}`);
   }
   if (skillGenerated) {
     const skillRel = relative(base, skillPath);
@@ -455,14 +455,14 @@ if (command === 'init') {
   const devMode = args.includes('--dev');
   runStart(baseDir, port, devMode);
 } else {
-  console.log(c(C.bold, 'Vibe Tracker v1.0.0'));
+  console.log(c(C.bold, 'Vibe Ticket Tracker v1.0.0'));
   console.log(c(C.bold, 'Usage:'));
-  console.log(`  ${c(C.bold, 'npx vibe-tracker init')}  [--port <n>]   Initialize in current project`);
-  console.log(`  ${c(C.bold, 'npx vibe-tracker start')}  [--port <n>] [--dev]  Start the server`);
-  console.log(`  ${c(C.bold, 'npx vibe-tracker --help')}  Show this help`);
+  console.log(`  ${c(C.bold, 'npx vibe-ticket-tracker init')}  [--port <n>]   Initialize in current project`);
+  console.log(`  ${c(C.bold, 'npx vibe-ticket-tracker start')}  [--port <n>] [--dev]  Start the server`);
+  console.log(`  ${c(C.bold, 'npx vibe-ticket-tracker --help')}  Show this help`);
   console.log(`\n${c(C.yellow, 'Interactive init wizard:')}
-  npx vibe-tracker init
-  npx vibe-tracker init -p 61001
+  npx vibe-ticket-tracker init
+  npx vibe-ticket-tracker init -p 61001
 `);
   closeRl();
 }

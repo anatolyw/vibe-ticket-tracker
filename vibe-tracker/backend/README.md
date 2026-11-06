@@ -1,4 +1,4 @@
-# Vibe Tracker — Backend
+# Vibe Ticket Tracker — Backend
 
 Server-side API, MCP endpoint, and ticket storage engine.
 

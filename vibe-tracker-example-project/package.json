@@ -11,6 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "vibe-tracker": "file:../vibe-tracker/vibe-tracker-1.0.0.tgz"
+    "vibe-ticket-tracker": "file:../vibe-tracker/vibe-ticket-tracker-1.0.0.tgz"
   }
 }

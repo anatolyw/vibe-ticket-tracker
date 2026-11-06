@@ -6,7 +6,7 @@ status: closed
 created: 2026-11-02
 updated: 2026-11-02
 ---
-# Vibe Tracker — Frontend E2E Test Plan
+# Vibe Ticket Tracker — Frontend E2E Test Plan
 
 ## Goals ✅ COMPLETE
 

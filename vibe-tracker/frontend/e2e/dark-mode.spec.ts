@@ -35,7 +35,7 @@ test.describe('Dark Mode', () => {
   test('theme preference persists in localStorage after toggle', async ({ page }) => {
     await page.locator('button[aria-label="Switch to dark mode"]').click();
     await page.waitForTimeout(300);
-    const stored = await page.evaluate(() => localStorage.getItem('vibe-tracker-theme'));
+    const stored = await page.evaluate(() => localStorage.getItem('vibe-ticket-tracker-theme'));
     expect(stored).toBe('dark');
   });
 

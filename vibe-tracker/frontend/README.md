@@ -1,4 +1,4 @@
-# Vibe Tracker — Frontend
+# Vibe Ticket Tracker — Frontend
 
 Angular 19 application with Tailwind CSS v4 and Lucide icons.
 

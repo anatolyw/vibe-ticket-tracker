@@ -51,7 +51,7 @@ export async function mcpInitialize(request: APIRequestContext): Promise<string>
           tools: {},
           resources: {},
         },
-        clientInfo: { name: 'vibe-tracker-e2e', version: '0.1.0' },
+        clientInfo: { name: 'vibe-ticket-tracker-e2e', version: '0.1.0' },
       },
     },
   });

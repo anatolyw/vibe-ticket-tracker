@@ -1,11 +1,11 @@
 {
-  "name": "vibe-tracker",
+  "name": "vibe-ticket-tracker",
   "version": "1.0.0",
   "description": "Local ticket tracking system for vibe coding — CLI + Express API with MCP support",
   "type": "module",
   "main": "./dist-server/index.js",
   "bin": {
-    "vibe-tracker": "backend/bin/vibe-tracker.cjs"
+    "vibe-ticket-tracker": "backend/bin/vibe-ticket-tracker.cjs"
   },
   "files": [
     "LICENSE",
@@ -13,8 +13,8 @@
     "backend/bin/",
     "dist-server/",
     "dist-ui/",
-    "VIBE-TRACKER-AGENTS-TEMPLATE.md",
-    "VIBE-TRACKER-SKILL-TEMPLATE.md"
+    "VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md",
+    "VIBE-TICKET-TRACKER-SKILL-TEMPLATE.md"
   ],
   "scripts": {
     "clean:backend": "cd backend && rm -rf dist/ node_modules/ *.tsbuildinfo",
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anatolyw/vibe-tracker.git"
+    "url": "git+https://github.com/anatolyw/vibe-ticket-tracker.git"
   },
   "keywords": [
     "ticketing",

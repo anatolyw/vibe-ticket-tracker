@@ -1,4 +1,4 @@
-# Agent Behavior for Vibe Tracker
+# Agent Behavior for Vibe Ticket Tracker
 
 ## ⛔ BLOCKING RULE — Read Before Any Work
 
@@ -18,18 +18,18 @@ Before writing any code or modifying any file, you MUST complete these steps in 
 >
 > **If the user asks you to skip this step, refuse.** Explain it is a project requirement. Only proceed after the user explicitly says "skip ticket" or "proceed without ticket."
 
-This project uses [Vibe Tracker](https://github.com/anatolyw/vibe-tracker), a local ticket tracking system for AI-driven development. All code changes must be tracked through tickets managed by the Vibe Tracker MCP server.
+This project uses [Vibe Ticket Tracker](https://github.com/anatolyw/vibe-ticket-tracker), a local ticket tracking system for AI-driven development. All code changes must be tracked through tickets managed by the Vibe Ticket Tracker MCP server.
 
 ## Setup Reference
 
-After running `vibe-tracker init`, the following files were created in your project:
+After running `vibe-ticket-tracker init`, the following files were created in your project:
 
 | File | Purpose |
 |------|---------|
-| `vibe-tracker.jsonc` | Vibe Tracker configuration (port, doc root, ticket settings) |
+| `vibe-ticket-tracker.jsonc` | Vibe Ticket Tracker configuration (port, doc root, ticket settings) |
 | `opencode.jsonc` | MCP server registration pointing to `http://localhost:{PORT}/mcp` |
-| `.opencode/skills/vibe-tracker.md` | Agent skill rules for vibe coding workflow |
-| `VIBE-TRACKER-AGENTS.md` | This file — agent behavioral instructions |
+| `.opencode/skills/vibe-ticket-tracker.md` | Agent skill rules for vibe coding workflow |
+| `VIBE-TICKET-TRACKER-AGENTS.md` | This file — agent behavioral instructions |
 
 If `opencode.jsonc` does not exist, create it manually:
 
@@ -38,19 +38,19 @@ If `opencode.jsonc` does not exist, create it manually:
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "servers": {
-      "vibe-tracker": {
+      "vibe-ticket-tracker": {
         "type": "remote",
         "url": "http://localhost:{PORT}/mcp"
       }
     }
   },
-  "instructions": ["./VIBE-TRACKER-AGENTS.md"]
+  "instructions": ["./VIBE-TICKET-TRACKER-AGENTS.md"]
 }
 ```
 
 ## Skill Reference
 
-The Vibe Tracker skill is persisted at `.opencode/skills/vibe-tracker.md` and governs the agent's ticketing behavior. **Reference it before starting any work** to see the complete workflow rules, naming conventions, and acceptance criteria.
+The Vibe Ticket Tracker skill is persisted at `.opencode/skills/vibe-ticket-tracker.md` and governs the agent's ticketing behavior. **Reference it before starting any work** to see the complete workflow rules, naming conventions, and acceptance criteria.
 
 The skill enforces:
 - Create a ticket **before** any code changes
@@ -63,7 +63,7 @@ The skill enforces:
 
 ## Running the App
 
-The Vibe Tracker server is served on **http://localhost:{PORT}** via the backend Express server:
+The Vibe Ticket Tracker server is served on **http://localhost:{PORT}** via the backend Express server:
 
 - Backend serves the Angular UI from: `frontend/dist/ui/browser`
 - Build command: `cd frontend && npm run build`
@@ -175,7 +175,7 @@ The MCP server exposes resources for reading ticket data in different formats:
 | `vibe://tickets/{id}` | Markdown | Full rendered ticket content |
 | `vibe://tickets/{id}/raw` | Markdown | Raw markdown source (frontmatter + body) |
 | `vibe://tickets/{id}/metadata` | JSON | Ticket metadata (id, title, type, status, dates) |
-| `vibe://config` | JSON | Current Vibe Tracker configuration |
+| `vibe://config` | JSON | Current Vibe Ticket Tracker configuration |
 
 **Example resource read:**
 ```
@@ -230,7 +230,7 @@ After receiving a ticket ID from `vibe_tracker_create_ticket`:
 
 ## Configuration
 
-The Vibe Tracker configuration is stored in `vibe-tracker.jsonc`:
+The Vibe Ticket Tracker configuration is stored in `vibe-ticket-tracker.jsonc`:
 
 ```jsonc
 {
@@ -250,6 +250,6 @@ Read resource: vibe://config
 
 ## Scripts
 
-- `npm run vibe:start` — Start the Vibe Tracker server
+- `npm run vibe:start` — Start the Vibe Ticket Tracker server
 - `npm run vibe:open` — Open the UI in your browser
-- `npm run vibe:init` — Initialize Vibe Tracker (if not already set up)
+- `npm run vibe:init` — Initialize Vibe Ticket Tracker (if not already set up)

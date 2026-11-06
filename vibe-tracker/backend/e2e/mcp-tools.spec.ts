@@ -25,7 +25,7 @@ test.describe('Backend E2E — MCP: Tools List & Initialize', () => {
     const initResponse = body[0];
     expect(initResponse.result).toBeDefined();
     expect(initResponse.result?.protocolVersion).toBe('2024-11-05');
-    expect(initResponse.result?.serverInfo?.name).toBe('vibe-tracker');
+    expect(initResponse.result?.serverInfo?.name).toBe('vibe-ticket-tracker');
     expect(initResponse.result?.capabilities).toHaveProperty('tools');
     expect(initResponse.result?.capabilities).toHaveProperty('resources');
     // Second element is the initialized notification

@@ -20,7 +20,7 @@ export const DEFAULT_CONFIG: VibeTrackerConfig = {
 };
 
 // JSONC file names — check .jsonc first, then .json as fallback
-const CONFIG_FILE_NAMES = ['vibe-tracker.jsonc', 'vibe-tracker.json'];
+const CONFIG_FILE_NAMES = ['vibe-ticket-tracker.jsonc', 'vibe-ticket-tracker.json'];
 
 /**
  * Parse a JSONC string: strip // line comments (outside strings) and trailing commas.
@@ -110,7 +110,7 @@ export function initConfig(
     ...DEFAULT_CONFIG,
     VIBE_TRACKER_PORT: port,
   };
-  const targetName = preferJSONC ? 'vibe-tracker.jsonc' : 'vibe-tracker.json';
+  const targetName = preferJSONC ? 'vibe-ticket-tracker.jsonc' : 'vibe-ticket-tracker.json';
   const configPath = resolve(baseDir, targetName);
   const content = generateJSONCConfig(config);
   writeFileSync(configPath, content, 'utf-8');

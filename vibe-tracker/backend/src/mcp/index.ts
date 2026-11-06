@@ -79,7 +79,7 @@ export function createMCPEndpoint(config: VibeTrackerConfig, baseDir: string): R
           },
         },
         serverInfo: {
-          name: 'vibe-tracker',
+          name: 'vibe-ticket-tracker',
           version: '1.0.0',
         },
       };
@@ -198,7 +198,7 @@ export function createMCPEndpoint(config: VibeTrackerConfig, baseDir: string): R
           {
             uriTemplate: 'vibe://config',
             name: 'vibe://config',
-            description: 'Current vibe-tracker configuration',
+            description: 'Current vibe-ticket-tracker configuration',
             mimeType: 'application/json',
           },
         ],

@@ -76,7 +76,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     try {
-      const stored = localStorage.getItem('vibe-tracker-sidebar-collapsed');
+      const stored = localStorage.getItem('vibe-ticket-tracker-sidebar-collapsed');
       if (stored !== null) this.collapsed.set(stored === 'true');
     } catch { /* noop */ }
     this.sub = this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
@@ -94,7 +94,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
   onToggleCollapse = (): void => {
     this.collapsed.update((v) => {
       const next = !v;
-      try { localStorage.setItem('vibe-tracker-sidebar-collapsed', String(next)); } catch { /* noop */ }
+      try { localStorage.setItem('vibe-ticket-tracker-sidebar-collapsed', String(next)); } catch { /* noop */ }
       return next;
     });
   };

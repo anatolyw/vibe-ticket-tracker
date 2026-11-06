@@ -58,7 +58,7 @@ function writeTestConfig(baseDir: string, docRoot: string, port: number): void {
     VIBE_TRACKER_TICKET_NUM_PATTERN: 'XXXXX',
     VIBE_TRACKER_TICKET_SUFFIX_LENGTH: 80,
   };
-  writeFileSync(join(baseDir, 'vibe-tracker.json'), JSON.stringify(config, null, 2), 'utf-8');
+  writeFileSync(join(baseDir, 'vibe-ticket-tracker.json'), JSON.stringify(config, null, 2), 'utf-8');
 }
 
 /**

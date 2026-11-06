@@ -10,7 +10,7 @@ updated: 2026-11-02
 
 ## Overview
 
-Add comprehensive end-to-end tests for the Vibe Tracker backend, covering REST API endpoints, MCP JSON-RPC features, race conditions, and error handling. Tests run against a live server using Playwright with a dedicated test doc root that is cleaned per test.
+Add comprehensive end-to-end tests for the Vibe Ticket Tracker backend, covering REST API endpoints, MCP JSON-RPC features, race conditions, and error handling. Tests run against a live server using Playwright with a dedicated test doc root that is cleaned per test.
 
 **Status: ✅ COMPLETE — 102/102 tests passing**
 
@@ -44,7 +44,7 @@ Instead of per-file `beforeAll`/`afterAll`, a **global setup** starts a single s
 - **`shared/global-setup.cjs`** — CommonJS file (required for Playwright globalSetup with ESM project)
   1. Builds the server if not already built
   2. Creates temp doc root directory (`tmp/.vibe-tracker-e2e-doc-{timestamp}`)
-  3. Writes `vibe-tracker.json` config pointing to temp doc root
+  3. Writes `vibe-ticket-tracker.json` config pointing to temp doc root
   4. Spawns server on port 61001 with the temp base dir
   5. Stores port in `global.__E2E_PORT` for test helpers to use
   6. Waits for server health (`/api/tickets` returns 200)
