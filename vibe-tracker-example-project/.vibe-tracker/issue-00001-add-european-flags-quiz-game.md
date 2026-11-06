@@ -42,3 +42,5 @@ Add a command to package.json so I can run it as `npm run emoji`.
 - `/stats` command shows live statistics anytime during play
 - Graceful Ctrl+C (SIGINT) handler prints final statistics
 - Added `"emoji": "node scripts/emoji-quiz.js"` to package.json scripts
+
+<!-- Generated with vibe-ticket-tracker · https://github.com/anatolyw/vibe-ticket-tracker -->

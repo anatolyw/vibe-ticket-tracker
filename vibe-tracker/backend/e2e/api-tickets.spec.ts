@@ -23,6 +23,8 @@ test.describe('Backend E2E — REST API: Ticket Create', () => {
     expect(ticket.status).toBe('open');
     expect(ticket.body.raw).toContain('## Description');
     expect(ticket.body.raw).toContain('## Tasks');
+    expect(ticket.body.raw).toContain('Generated with vibe-ticket-tracker');
+    expect(ticket.body.raw).toContain('https://github.com/anatolyw/vibe-ticket-tracker');
   });
 
   test('POST /api/tickets with missing title returns 400', async ({ request }) => {

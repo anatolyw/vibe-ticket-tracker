@@ -223,8 +223,8 @@ export function createTicket(config: VibeTrackerConfig, docRoot: string, title: 
   };
 
   const body = description
-    ? `## Description\n${description}\n\n## Tasks\n- [ ] Plan implementation\n\n## Notes\n- None yet.\n\n## Changes\n### Files modified\n- (pending)\n\n### Code changes summary\n- (pending)\n`
-    : `## Description\n\n## Tasks\n- [ ] Plan implementation\n\n## Notes\n- None yet.\n\n## Changes\n### Files modified\n- (pending)\n\n### Code changes summary\n- (pending)\n`;
+    ? `## Description\n${description}\n\n## Tasks\n- [ ] Plan implementation\n\n## Notes\n- None yet.\n\n## Changes\n### Files modified\n- (pending)\n\n### Code changes summary\n- (pending)\n\n<!-- Generated with vibe-ticket-tracker · https://github.com/anatolyw/vibe-ticket-tracker -->\n`
+    : `## Description\n\n## Tasks\n- [ ] Plan implementation\n\n## Notes\n- None yet.\n\n## Changes\n### Files modified\n- (pending)\n\n### Code changes summary\n- (pending)\n\n<!-- Generated with vibe-ticket-tracker · https://github.com/anatolyw/vibe-ticket-tracker -->\n`;
 
   const content = buildContent(frontmatter, body, config);
   const filePath = resolve(docRoot, finalFilename);
