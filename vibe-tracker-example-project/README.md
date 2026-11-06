@@ -2,7 +2,7 @@
 
 This demo project content was set up with `vibe-ticket-tracker init` package for local ticket tracking.
 
-> **NOTE**: After setup, keep server running during vibe coding for UI and MCP endpoints.
+> **NOTE**: After setup, start the server and keep it running during vibe coding for UI and MCP endpoints.
 
 ## Setup & Display Next Steps
 

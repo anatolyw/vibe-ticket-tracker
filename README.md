@@ -37,6 +37,18 @@ vibe-ticket-tracker init
 vibe-ticket-tracker start
 ```
 
+# Example project
+
+## Screenshots
+
+See example project [here](./vibe-tracker-example-project/)
+
+Dashboard Example:
+![Dashboard](./docs/example-dashboard.png)
+
+Ticket Example:
+![Ticket](./docs/example-ticket.png)
+
 ## License
 
-MIT
+[MIT](./vibe-tracker/LICENSE)

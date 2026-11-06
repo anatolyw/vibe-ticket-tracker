@@ -57,7 +57,9 @@ cd /workspace/vibe-tracker
 git add -A
 git commit -m "Prepare for npm publishing v1.0.0"
 
-# Create a git tag
+# Bump version + create commit + create local tag (e.g. v1.0.0)
+npm version 1.0.0
+# or Create a git tag manually
 git tag -a v1.0.0 -m "Version 1.0.0 - Initial npm release"
 
 # Push to remote
