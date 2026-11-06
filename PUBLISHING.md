@@ -53,12 +53,13 @@ You should see the build output followed by multiple files in the tarball includ
 ```bash
 cd /workspace/vibe-tracker
 
+# Bump version + create commit + create local tag (e.g. v1.0.0)
+npm version 1.0.0
+
 # Commit all changes
 git add -A
 git commit -m "Prepare for npm publishing v1.0.0"
 
-# Bump version + create commit + create local tag (e.g. v1.0.0)
-npm version 1.0.0
 # or Create a git tag manually
 git tag -a v1.0.0 -m "Version 1.0.0 - Initial npm release"
 

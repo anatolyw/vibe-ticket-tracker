@@ -1,6 +1,6 @@
 {
   "name": "vibe-ticket-tracker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Local ticket tracking system for vibe coding — CLI + Express API with MCP support",
   "type": "module",
   "main": "./dist-server/index.js",
