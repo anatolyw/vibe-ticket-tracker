@@ -98,7 +98,7 @@ export function createMCPEndpoint(config: VibeTrackerConfig, baseDir: string): R
         tools: [
           {
             name: 'vibe_tracker_create_ticket',
-            description: 'Create a new ticket in the vibe tracker',
+            description: 'Create a new ticket in the Vibe Ticket Tracker',
             inputSchema: {
               type: 'object',
               required: ['title', 'type'],

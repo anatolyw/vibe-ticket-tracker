@@ -1,4 +1,4 @@
-# Agent Behavior for Vibe Tracker
+# Agent Behavior for Vibe Ticket Tracker
 
 ## Development Workflow
 

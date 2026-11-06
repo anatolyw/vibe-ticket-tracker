@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vibe-tracker.local/schema/ticket-frontmatter.json",
-  "title": "Vibe Tracker Ticket Frontmatter",
+  "title": "Vibe Ticket Tracker Ticket Frontmatter",
   "description": "Schema for structured ticket YAML frontmatter in .md files",
   "type": "object",
   "required": ["id", "title", "type", "status", "created", "updated"],

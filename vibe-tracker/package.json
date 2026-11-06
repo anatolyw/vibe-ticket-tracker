@@ -10,7 +10,7 @@
   "files": [
     "LICENSE",
     "README.md",
-    "backend/bin/",
+    "backend/bin/vibe-ticket-tracker.cjs",
     "dist-server/",
     "dist-ui/",
     "VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md",

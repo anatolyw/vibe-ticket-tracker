@@ -34,7 +34,7 @@ export function createApp(config: VibeTrackerConfig, baseDir: string, distDir: s
 
 export function startServer(app: express.Application, port: number): void {
   app.listen(port, () => {
-    console.log(`Vibe Tracker running at http://localhost:${port}`);
+    console.log(`Vibe Ticket Tracker running at http://localhost:${port}`);
   });
 }
 

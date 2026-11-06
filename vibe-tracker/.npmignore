@@ -42,13 +42,9 @@ Thumbs.db
 prerendered-routes.json
 
 # Backend sub-project
-backend/e2e/
-backend/node_modules/
-backend/package*.json
-backend/playwright.config.ts
-backend/README.md
-backend/tsconfig*.json
-backend/src/
+backend/
+!backend/bin/
+!backend/bin/vibe-ticket-tracker.cjs
 
 # Frontend sub-project
 frontend/node_modules/

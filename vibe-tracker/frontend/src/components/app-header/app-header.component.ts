@@ -14,7 +14,7 @@ import { getIsDark, toggleDark } from '../../lib/theme.service';
             <lucide-icon name="Menu" [size]="20"></lucide-icon>
           </button>
         }
-        <h1 class="text-lg font-semibold truncate">Vibe Tracker</h1>
+        <h1 class="text-lg font-semibold truncate">Vibe Ticket Tracker</h1>
       </div>
       <div class="flex items-center gap-1">
         <button (click)="onToggleDark()" class="p-2 rounded-md hover:bg-accent transition-colors text-muted-foreground" [attr.aria-label]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'">

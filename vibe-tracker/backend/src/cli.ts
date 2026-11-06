@@ -193,7 +193,7 @@ function generateUIDistPath(): string {
 // ── Init command ─────────────────────────────────────────────────────
 
 async function runInit(baseDir: string, portFlag?: number): Promise<void> {
-  console.log(c(C.bold, '\n═══ Vibe Tracker Initialize ═══\n'));
+  console.log(c(C.bold, '\n═══ Vibe Ticket Tracker Initialize ═══\n'));
 
   const base = resolve(baseDir);
   const hasPortFlag = portFlag !== undefined;
@@ -203,7 +203,7 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
   if (!hasPortFlag) {
     let valid = false;
     while (!valid) {
-      const input = await ask('What port should the Vibe Tracker server use? (61000-62000, default: 61000)');
+      const input = await ask('What port should the Vibe Ticket Tracker server use? (61000-62000, default: 61000)');
       if (input === '') {
         port = DEFAULT_CONFIG.VIBE_TRACKER_PORT;
         valid = true;
@@ -263,7 +263,7 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
 
   // ── Step 2: Skill path (needed for MCP config instructions) ─────────
   const skillDefault = '.opencode/skills/vibe-ticket-tracker.md';
-  const skillInput = await ask('Where should the Vibe Tracker skill file be placed? (default: ' + skillDefault + ')');
+  const skillInput = await ask('Where should the Vibe Ticket Tracker skill file be placed? (default: ' + skillDefault + ')');
   const skillPath = skillInput ? resolve(base, skillInput) : resolve(base, skillDefault);
 
   // ── Step 3: MCP config ────────────────────────────────────────
@@ -348,7 +348,7 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
       console.log(template.replace(/{PORT}/g, String(port)));
     }
   } else {
-    const createAgents = await askYesNo('Create VIBE-TICKET-TRACKER-AGENTS.md with Vibe Tracker workflow?');
+    const createAgents = await askYesNo('Create VIBE-TICKET-TRACKER-AGENTS.md with Vibe Ticket Tracker workflow?');
     if (createAgents) {
       const template = readTemplate('VIBE-TICKET-TRACKER-AGENTS-TEMPLATE.md');
       const withPort = template.replace(/{PORT}/g, String(port));
@@ -383,7 +383,7 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
 function runStart(baseDir: string, portFlag?: number, devMode?: boolean): void {
   const config = loadConfig(baseDir);
   const port = portFlag ?? config.VIBE_TRACKER_PORT;
-  console.log('Starting Vibe Tracker...');
+  console.log('Starting Vibe Ticket Tracker...');
 
   // Resolve paths
   const cliPath = resolve(__cliDir, 'cli.js');

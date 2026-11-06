@@ -32,7 +32,7 @@ npm-debug.log*
 .env
 .env.local
 
-# Vibe Tracker (managed by the tool)
+# Vibe Ticket Tracker (managed by the tool)
 .vibe-tracker/
 
 # Test/Temp
