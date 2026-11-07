@@ -19,24 +19,19 @@ npm --version
 ## Step 2: Login from Terminal
 
 ```bash
-npm login
+npm login   # You'll be redirected to the browser to perform login with MFA
+npm whoami  # Verify login, Should return your username
 ```
 
-You'll be prompted for:
-- **Username**: your npm username
-- **Password**: your npm password
-- **Email**: your email address
-
-Verify login:
-```bash
-npm whoami
-# Should return your username
-```
-
-## Step 3: Review the Package
+## Step 3: Build and Review the Package
 
 ```bash
-cd /workspace/vibe-tracker
+cd $PROJECT_ROOT/vibe-tracker
+
+# Clean build
+npm run clean
+npm install && cd frontend && npm install && cd ../backend && npm install && cd ..
+npm pack
 
 # Dry-run publish to verify build + contents
 # This triggers prepublishOnly which builds everything
@@ -51,17 +46,21 @@ You should see the build output followed by multiple files in the tarball includ
 ## Step 4: Tag the Version in Git
 
 ```bash
-cd /workspace/vibe-tracker
+cd $PROJECT_ROOT/vibe-tracker
 
-# Bump version + create commit + create local tag (e.g. v1.0.0)
+# Bump version
 npm version 1.0.0
 
 # Commit all changes
 git add -A
 git commit -m "Prepare for npm publishing v1.0.0"
+git commit -m "Prepare for npm publishing v1.0.1"
+# ...
 
 # or Create a git tag manually
 git tag -a v1.0.0 -m "Version 1.0.0 - Initial npm release"
+git tag -a v1.0.1 -m "Version 1.0.1 - Update documentation"
+# ...
 
 # Push to remote
 git push origin main
@@ -72,7 +71,7 @@ git push origin v1.0.0
 
 **To actually publish:**
 ```bash
-cd /workspace/vibe-tracker
+cd $PROJECT_ROOT/vibe-tracker
 npm publish
 ```
 
@@ -120,26 +119,20 @@ npm publish
 
 ## Important Notes
 
-1. **Package name uniqueness**: If `vibe-ticket-tracker` is already taken, use a scoped name like `@anatolyw/vibe-ticket-tracker` by changing the `name` field in `package.json` to `"@anatolyw/vibe-ticket-tracker"`.
+1. **Version constraints**: The package requires `node >= 18.0.0` (specified in `engines`).
 
-2. **Scoped packages** require `--access public` on first publish:
-   ```bash
-   npm publish --access public
-   ```
-
-3. **Version constraints**: The package requires `node >= 18.0.0` (specified in `engines`).
-
-4. **What users install**: When users run `npm install vibe-ticket-tracker`, they get:
+2. **What users install**: When users run `npm install vibe-ticket-tracker`, they get:
    - A `vibe-ticket-tracker` CLI command (via `bin`)
    - The compiled Express server
    - The built Angular UI
    - No source code, no `node_modules`, no build tools
 
-5. **Build at publish time**: The `prepublishOnly` script checks if `backend/dist` and `frontend/dist/ui/browser` exist. If they are missing, it runs `npm run build` first, then copies output to `dist-server/` and `dist-ui/`, and injects version. You still need to run `npm install` (root + backend + frontend) beforehand so the build tools are available.
+3. **Build at publish time**: The `prepublishOnly` script checks if `backend/dist` and `frontend/dist/ui/browser` exist. If they are missing, it runs `npm run build` first, then copies output to `dist-server/` and `dist-ui/`, and injects version. You still need to run `npm install` (root + backend + frontend) beforehand so the build tools are available.
 
-6. **Local testing**: To test the package locally without publishing, you can install from the local directory:
+4. **Local testing**: To test the package locally without publishing, you can install from the local directory:
    ```bash
-   npm install /workspace/vibe-tracker
+   # Adjust to proper version
+   npm install $PROJECT_ROOT/vibe-tracker/vibe-ticket-tracker-1.0.0.tgz 
    ```
 
 ## Testing Locally
@@ -147,7 +140,7 @@ npm publish
 Use these commands to verify the package before publishing:
 
 ```bash
-cd /workspace/vibe-tracker
+cd $PROJECT_ROOT/vibe-tracker
 
 # Clean previous build results
 npm run clean
@@ -163,7 +156,7 @@ npm pack
 mkdir /tmp/vibe-tracker-example-project && cd /tmp/vibe-tracker-example-project
 npm init -y
 npm uninstall vibe-ticket-tracker 2>/dev/null # clear cache
-npm install /workspace/vibe-tracker/vibe-ticket-tracker-1.0.0.tgz
+npm install $PROJECT_ROOT/vibe-tracker/vibe-ticket-tracker-1.0.0.tgz 
 
 # Verify the CLI works
 npx vibe-ticket-tracker --help
