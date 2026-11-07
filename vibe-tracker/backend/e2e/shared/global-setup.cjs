@@ -44,7 +44,7 @@ async function setup() {
     String(PORT),
   ], {
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, NODE_ENV: 'test' },
+    env: { ...process.env, NODE_ENV: 'test', VIBE_TRACKER_VERSION: '9.9.9' },
   });
 
   serverProcess.stdout?.on('data', (data) => {

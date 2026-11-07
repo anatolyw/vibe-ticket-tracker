@@ -5,6 +5,10 @@ dist/
 out-tsc/
 *.tgz
 
+# Generated version files (produced during build, needed by TypeScript)
+backend/src/version.d.ts
+frontend/src/version.ts
+
 # Dependencies
 node_modules/
 

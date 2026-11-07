@@ -1,67 +1,88 @@
 #!/usr/bin/env node
 /**
- * Inject version / dev SHA into the built index.html.
- * Run as a postbuild step.
+ * Inject version constants into backend and frontend.
+ *
+ * Modes (single argument):
+ *   backend       — generates backend/dist/version.js  +  backend/src/version.d.ts
+ *   frontend-ts   — generates frontend/src/version.ts
+ *   frontend-html — injects <script> into frontend/dist/ui/browser/index.html
+ *
+ * The backend version.js supports runtime override via VIBE_TRACKER_VERSION env var.
+ * The frontend version is a bundled constant; the HTML injection also sets
+ * window.VIBE_TRACKER_VERSION for runtime override (e.g. in e2e tests via addInitScript).
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync } from 'node:child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const distDir = process.argv[2];
-if (!distDir || !existsSync(distDir)) {
-  console.error('Usage: inject-version <dist-dir>');
+const projectRoot = resolve(__dirname, '..', '..');
+const pkgPath = resolve(projectRoot, 'package.json');
+const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+const version = pkg.version || '0.0.0';
+
+const mode = process.argv[2];
+if (!mode) {
+  console.error('Usage: inject-version <backend|frontend-ts|frontend-html>');
   process.exit(1);
 }
 
-const indexHtmlPath = resolve(distDir, 'index.html');
-if (!existsSync(indexHtmlPath)) {
-  console.error('index.html not found at', indexHtmlPath);
-  process.exit(1);
+// ── Backend ────────────────────────────────────────────────────────
+
+if (mode === 'backend') {
+  // Runtime version.js in the dist output directory
+  const distDir = resolve(projectRoot, 'backend', 'dist');
+  mkdirSync(distDir, { recursive: true });
+  const versionJs =
+`// Auto-generated version file — do not edit.
+const VIBE_TRACKER_VERSION = (process.env.VIBE_TRACKER_VERSION) || '${version}';
+export { VIBE_TRACKER_VERSION };
+`;
+  writeFileSync(resolve(distDir, 'version.js'), versionJs, 'utf-8');
+
+  // Type declaration in the source directory (TypeScript needs it for the .js import)
+  const srcDir = resolve(projectRoot, 'backend', 'src');
+  const versionDts = `export declare const VIBE_TRACKER_VERSION: string;
+`;
+  writeFileSync(resolve(srcDir, 'version.d.ts'), versionDts, 'utf-8');
+
+  console.log(`[inject] backend  version="${version}"  (dist/version.js + src/version.d.ts)`);
 }
 
-// ── Determine version ──────────────────────────────────────────────────
+// ── Frontend (TypeScript source) ───────────────────────────────────
 
-// Read from vibe-ticket-tracker root package.json
-const rootPkgPath = resolve(__dirname, '..', '..', 'package.json');
-let version = '';
-if (existsSync(rootPkgPath)) {
-  try {
-    version = JSON.parse(readFileSync(rootPkgPath, 'utf-8')).version || '';
-  } catch { /* ignore */ }
+if (mode === 'frontend-ts' || mode === 'frontend') {
+  const srcDir = resolve(projectRoot, 'frontend', 'src');
+  const isRelease = version !== '0.0.0';
+  const versionStr = isRelease ? `v${version}` : 'dev';
+  const versionTs =
+`// Auto-generated version file — do not edit.
+export const VIBE_TRACKER_VERSION = '${versionStr}';
+`;
+  writeFileSync(resolve(srcDir, 'version.ts'), versionTs, 'utf-8');
+  console.log(`[inject] frontend-ts version="${versionStr}"`);
 }
 
-// Get short git commit hash (or empty string if not a git repo)
-let devSha = '';
-try {
-  devSha = execSync('git rev-parse --short HEAD', { cwd: resolve(__dirname, '..', '..'), stdio: 'pipe' }).toString().trim();
-} catch {
-  // Not in a git repo — skip dev SHA
-}
+// ── Frontend (HTML injection, post-build) ──────────────────────────
 
-const isRelease = version !== '';
-const versionStr = isRelease ? `v${version}` : `dev (${devSha})`;
-
-// ── Inject script tag into index.html ─────────────────────────────────
-
-const indexHtml = readFileSync(indexHtmlPath, 'utf-8');
-
-// Skip if already injected (idempotent)
-if (indexHtml.includes('id="vibe-ticket-tracker-version"')) {
-  console.log('Version already injected, skipping.');
-  process.exit(0);
-}
-
-const injectScript = `<script id="vibe-ticket-tracker-version" type="text/javascript">
+if (mode === 'frontend-html') {
+  const isRelease = version !== '0.0.0';
+  const versionStr = isRelease ? `v${version}` : 'dev';
+  const indexPath = resolve(projectRoot, 'frontend', 'dist', 'ui', 'browser', 'index.html');
+  if (existsSync(indexPath)) {
+    const indexHtml = readFileSync(indexPath, 'utf-8');
+    if (!indexHtml.includes('id="vibe-version"')) {
+      const injectScript = `<script id="vibe-version" type="text/javascript">
   window.VIBE_TRACKER_VERSION = ${isRelease ? `"${versionStr}"` : 'undefined'};
-  window.VIBE_TRACKER_DEV_SHA = ${devSha ? `"${devSha}"` : 'undefined'};
+  window.VIBE_TRACKER_DEV_SHA = undefined;
 </script>`;
-
-// Insert just before </body>
-const updatedHtml = indexHtml.replace('</body>', `${injectScript}\n  </body>`);
-writeFileSync(indexHtmlPath, updatedHtml, 'utf-8');
-
-console.log(`Injected version="${versionStr}" (release=${isRelease}) into ${indexHtmlPath}`);
+      const updatedHtml = indexHtml.replace('</body>', `${injectScript}\n  </body>`);
+      writeFileSync(indexPath, updatedHtml, 'utf-8');
+    }
+    console.log(`[inject] frontend-html version="${versionStr}"`);
+  } else {
+    console.log('[inject] frontend HTML not found — skipping injection.');
+  }
+}

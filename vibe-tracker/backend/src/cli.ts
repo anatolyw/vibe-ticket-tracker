@@ -13,8 +13,6 @@ import {
   existsSync,
   mkdirSync,
   renameSync,
-  cpSync,
-  statSync,
 } from 'node:fs';
 import { resolve, join, relative } from 'node:path';
 import { spawn } from 'child_process';
@@ -22,10 +20,12 @@ import { createApp, startServer } from './index.js';
 import {
   loadConfig,
   initConfig,
+  findConfigFile,
   DEFAULT_CONFIG,
   generateJSONCConfig,
   type VibeTrackerConfig,
 } from './storage/config.js';
+import { VIBE_TRACKER_VERSION } from './version.js';
 
 // ESM-compatible __cliDir
 const __filename = fileURLToPath(import.meta.url);
@@ -383,7 +383,17 @@ async function runInit(baseDir: string, portFlag?: number): Promise<void> {
 function runStart(baseDir: string, portFlag?: number, devMode?: boolean): void {
   const config = loadConfig(baseDir);
   const port = portFlag ?? config.VIBE_TRACKER_PORT;
+  const configPath = findConfigFile(baseDir);
   console.log('Starting Vibe Ticket Tracker...');
+  console.log(`- VERSION: ${VIBE_TRACKER_VERSION}`);
+  console.log(`- configuration file: ${configPath ? resolve(configPath) : 'default (using defaults)'}`);
+  console.log('  Configuration values:');
+  console.log(`  - VIBE_TRACKER_PORT: ${config.VIBE_TRACKER_PORT}`);
+  console.log(`  - VIBE_TRACKER_DOC_ROOT: ${resolve(baseDir, config.VIBE_TRACKER_DOC_ROOT)}/`);
+  console.log(`  - VIBE_TRACKER_TICKET_PREFIX: ${config.VIBE_TRACKER_TICKET_PREFIX}`);
+  console.log(`  - VIBE_TRACKER_TICKET_TYPE_OPTIONS: ${JSON.stringify(config.VIBE_TRACKER_TICKET_TYPE_OPTIONS)}`);
+  console.log(`  - VIBE_TRACKER_TICKET_NUM_PATTERN: ${config.VIBE_TRACKER_TICKET_NUM_PATTERN}`);
+  console.log(`  - VIBE_TRACKER_TICKET_SUFFIX_LENGTH: ${config.VIBE_TRACKER_TICKET_SUFFIX_LENGTH}`);
 
   // Resolve paths
   const cliPath = resolve(__cliDir, 'cli.js');
@@ -455,7 +465,7 @@ if (command === 'init') {
   const devMode = args.includes('--dev');
   runStart(baseDir, port, devMode);
 } else {
-  console.log(c(C.bold, 'Vibe Ticket Tracker v1.0.0'));
+  console.log(c(C.bold, `Vibe Ticket Tracker v${VIBE_TRACKER_VERSION}`));
   console.log(c(C.bold, 'Usage:'));
   console.log(`  ${c(C.bold, 'npx vibe-ticket-tracker init')}  [--port <n>]   Initialize in current project`);
   console.log(`  ${c(C.bold, 'npx vibe-ticket-tracker start')}  [--port <n>] [--dev]  Start the server`);

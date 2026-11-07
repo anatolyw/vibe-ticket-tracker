@@ -247,9 +247,3 @@ Read the current configuration via MCP:
 ```
 Read resource: vibe://config
 ```
-
-## Scripts
-
-- `npm run vibe:start` — Start the Vibe Ticket Tracker server
-- `npm run vibe:open` — Open the UI in your browser
-- `npm run vibe:init` — Initialize Vibe Ticket Tracker (if not already set up)

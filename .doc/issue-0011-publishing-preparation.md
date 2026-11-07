@@ -61,7 +61,7 @@ Prepared the Vibe Ticket Tracker project for publishing to www.npmjs.com. Adjust
 - Path resolution: `dirname(dirname(cliPath))` — only 2 levels up (was 3)
 - Template path: `dirname(cliPath)` — only 1 level up (was 2)
 - AGENTS.md references updated to `VIBE-TICKET-TRACKER-AGENTS.md`
-- Init summary updated to `npx vibe-ticket-tracker start` (no `vibe:open` line)
+- Init summary updated to `npx vibe-ticket-tracker start`
 
 ### `backend/src/cli.ts` (source)
 - Same source-level updates as compiled `cli.js`

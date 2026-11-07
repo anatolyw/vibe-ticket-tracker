@@ -10,7 +10,7 @@ import {
   TicketFrontmatter,
   getDocRoot,
 } from '../storage/ticket.js';
-import { VibeTrackerConfig as Config } from '../storage/config.js';
+import { VIBE_TRACKER_VERSION } from '../version.js';
 
 // MCP Protocol types
 interface MCPRequest {
@@ -80,7 +80,7 @@ export function createMCPEndpoint(config: VibeTrackerConfig, baseDir: string): R
         },
         serverInfo: {
           name: 'vibe-ticket-tracker',
-          version: '1.0.0',
+          version: VIBE_TRACKER_VERSION,
         },
       };
 

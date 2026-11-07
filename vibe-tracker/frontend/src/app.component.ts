@@ -2,26 +2,19 @@ import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
 import { AppSidebarComponent } from './components/app-sidebar/app-sidebar.component';
+import { VIBE_TRACKER_VERSION } from './version';
 
 // ── Version helpers ────────────────────────────────────────────────────
 
-/** Read the version string (set by build script from package.json). */
-declare global {
-  interface Window {
-    VIBE_TRACKER_VERSION?: string;
-    VIBE_TRACKER_DEV_SHA?: string;
-  }
-}
-
-/** Compute the display version: package version or dev commit hash. */
+/** Compute the display version: window override (e.g. e2e addInitScript) → bundled const → 'dev'. */
 function getVersion(): string {
-  if (typeof window !== 'undefined' && window.VIBE_TRACKER_VERSION) {
-    return window.VIBE_TRACKER_VERSION;
+  if (typeof window !== 'undefined') {
+    const w = window as unknown as Record<string, unknown>;
+    if (w.VIBE_TRACKER_VERSION) {
+      return String(w.VIBE_TRACKER_VERSION);
+    }
   }
-  if (typeof window !== 'undefined' && window.VIBE_TRACKER_DEV_SHA) {
-    return window.VIBE_TRACKER_DEV_SHA;
-  }
-  return 'dev';
+  return VIBE_TRACKER_VERSION || 'dev';
 }
 
 @Component({

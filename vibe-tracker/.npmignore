@@ -55,3 +55,7 @@ frontend/public/
 frontend/README.md
 frontend/src/
 frontend/e2e/
+
+# Generated version files (produced during build, needed by TypeScript)
+backend/src/version.d.ts
+frontend/src/version.ts

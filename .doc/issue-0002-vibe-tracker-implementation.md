@@ -389,20 +389,6 @@ vibe-ticket-tracker start
 # 6. Open http://localhost:61000 in browser
 ```
 
-#### Generated `package.json` scripts
-
-After `vibe-ticket-tracker init`:
-```json
-{
-  "scripts": {
-    "vibe:init": "vibe-ticket-tracker init",
-    "vibe:start": "vibe-ticket-tracker start",
-    "vibe": "vibe-ticket-tracker start",
-    "vibe:open": "open http://localhost:61000 || xdg-open http://localhost:61000 || start http://localhost:61000"
-  }
-}
-```
-
 ### 3.2 `opencode.jsonc` — MCP Configuration
 
 ```jsonc
@@ -753,13 +739,6 @@ If `VIBE_TRACKER_TICKET_TYPE_OPTIONS` is `["issue", "feat", "bug"]`, the effecti
 - Dark mode with `dark:` variants
 - Markdown prose styles for ticket rendering
 - Responsive breakpoints (768px, 1024px)
-
-#### `vibe-tracker-example-project/` — Demo
-
-- `package.json` — with `vibe` scripts (`vibe:start`, `vibe:open`, etc.)
-- `vibe-ticket-tracker.json` — config (port 61000, prefix `issue`, types: issue/feat/bug)
-- `opencode.jsonc` — MCP config pointing to `http://localhost:61000/mcp`
-- `VIBE-TRACKER-SKILL.md` — Agent rules (create ticket before work, branch per ticket, prefix commits, one ticket per session, no merge without instruction, etc.)
 
 ### Build Artifacts
 
