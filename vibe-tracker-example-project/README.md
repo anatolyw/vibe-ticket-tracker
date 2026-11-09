@@ -7,13 +7,21 @@ This demo project content was set up with `vibe-ticket-tracker init` package for
 ## Setup & Display Next Steps
 
 ```bash
-$ mkdir vibe-tracker-example-project
-$ cd vibe-tracker-example-project
-$ npm init -y
-# Add required .gitignore, README.md, etc.                  
-$ npm install ../vibe-tracker/vibe-ticket-tracker-1.0.0.tgz
-$ npx vibe-ticket-tracker init # Run setup dialog                    
+mkdir vibe-tracker-example-project
+cd vibe-tracker-example-project
+npm init -y
+# Add required .gitignore, README.md, etc.   
 
+# install vibe-ticket-tracker (once, globally)
+npx vibe-ticket-tracker
+# or install development build directly to the project
+npm install ../vibe-tracker/vibe-ticket-tracker-1.0.0.tgz
+
+# Run setup dialog (per project)
+npx vibe-ticket-tracker init               
+```
+Output of `vibe-ticket-tracker init`:
+```text
 ═══ Vibe Ticket Tracker Initialize ═══
 
 ❯ What port should the Vibe Ticket Tracker server use? (61000-62000, default: 61000) 
